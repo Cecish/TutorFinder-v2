@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Tutor Finder</string>
+    <string name="tab_text_1">Sign in</string>
+    <string name="tab_text_2">Sign up</string>
+    <string name="email_address">Email address</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="student">Student</string>
+    <string name="tutor">Tutor</string>
+    <string name="i_want_to_register_as_a">I want to register as a:</string>
 </resources>

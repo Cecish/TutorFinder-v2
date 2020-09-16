@@ -9,8 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_tutor_finder_v2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.TempActivity"/>
-        <activity android:name=".view.splashScreen.SplashScreenActivity"
+        <activity
+            android:name=".view.signInSignUp.ui.SignInSignUpActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".view.TempActivity" />
+        <activity
+            android:name=".view.splashScreen.SplashScreenActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
