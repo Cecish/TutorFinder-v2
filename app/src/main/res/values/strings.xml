@@ -10,5 +10,10 @@
     <string name="username">Username</string>
     <string name="student">Student</string>
     <string name="tutor">Tutor</string>
-    <string name="i_want_to_register_as_a">I want to register as a:</string>
+    <string name="register_as">I want to register as a:</string>
+    <string name="username_required_field">You must provide a username</string>
+    <string name="email_required_field">You must provide an email address</string>
+    <string name="password_required_field">You must provide a password</string>
+    <string name="email_validity">Enter a valid E-mail Address</string>
+    <string name="password_validity">Enter a password of at least 6 digits</string>
 </resources>
