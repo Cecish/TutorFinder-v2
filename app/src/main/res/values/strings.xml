@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Tutor Finder</string>
+    <string name="tab_text_1">Sign in</string>
+    <string name="tab_text_2">Sign up</string>
+    <string name="email_address">Email address</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="student">Student</string>
+    <string name="tutor">Tutor</string>
+    <string name="register_as">I want to register as a:</string>
+    <string name="username_required_field">You must provide a username</string>
+    <string name="email_required_field">You must provide an email address</string>
+    <string name="password_required_field">You must provide a password</string>
+    <string name="email_validity">Enter a valid E-mail Address</string>
+    <string name="password_validity">Enter a password of at least 6 digits</string>
 </resources>

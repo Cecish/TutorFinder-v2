@@ -8,7 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
-import com.app_perso.tutorfinder_v2.MainActivity;
+import com.app_perso.tutorfinder_v2.view.signInSignUp.ui.SignInSignUpActivity;
 
 public class AnimationSplashScreenUtils {
     private final static int SPLASH_DISPLAY_LENGTH = 2500;
@@ -18,8 +18,9 @@ public class AnimationSplashScreenUtils {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                //Create an intent that will statr the main app activity
-                Intent mainIntent = new Intent(packageContext, MainActivity.class);
+                //Create an intent that will start the main app activity
+                //Intent mainIntent = new Intent(packageContext, MainActivity.class);
+                Intent mainIntent = new Intent(packageContext, SignInSignUpActivity.class);
                 packageContext.startActivity(mainIntent);
                 packageContext.finish();
             }
