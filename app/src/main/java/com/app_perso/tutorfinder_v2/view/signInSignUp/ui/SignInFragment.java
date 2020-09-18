@@ -1,21 +1,18 @@
 package com.app_perso.tutorfinder_v2.view.signInSignUp.ui;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.app_perso.tutorfinder_v2.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.app_perso.tutorfinder_v2.databinding.FragmentSignInBinding;
 import com.app_perso.tutorfinder_v2.model.User;
 import com.app_perso.tutorfinder_v2.viewModel.SignInSignUpViewModel;
@@ -36,14 +33,13 @@ public class SignInFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        SignInSignUpViewModel signInSignUpViewModel = ViewModelProviders.of(this).get(SignInSignUpViewModel.class);
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_in, container, false);
-        View view = binding.getRoot();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
+        SignInSignUpViewModel signInSignUpViewModel = new ViewModelProvider(requireActivity()).get(SignInSignUpViewModel.class);
         binding.setSignInSignUpViewModel(signInSignUpViewModel);
 
-        signInSignUpViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+        signInSignUpViewModel.getSignInUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
             public void onChanged(@Nullable User signInUser) {
 
@@ -69,7 +65,12 @@ public class SignInFragment extends Fragment {
 
             }
         });
+    }
 
-        return view;
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentSignInBinding.inflate(inflater, container, false);
+        //set variables in Binding
+        return binding.getRoot();
     }
 }

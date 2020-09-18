@@ -11,8 +11,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".view.signInSignUp.ui.SignInSignUpActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".view.TempActivity" />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".TempActivity" />
         <activity
             android:name=".view.splashScreen.SplashScreenActivity"
             android:theme="@style/AppTheme.NoActionBar">

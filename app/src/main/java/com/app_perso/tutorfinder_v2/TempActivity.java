@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.view;
+package com.app_perso.tutorfinder_v2;
 
 import androidx.appcompat.app.AppCompatActivity;
 
