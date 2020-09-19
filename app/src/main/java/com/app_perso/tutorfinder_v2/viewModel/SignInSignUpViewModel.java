@@ -66,6 +66,10 @@ public class SignInSignUpViewModel extends ViewModel {
         return signInOutcome;
     }
 
+    public void setSignUpOutcome(String signUpOutcomeText) {
+        signUpOutcome.setValue(signUpOutcomeText);
+    }
+
     public void onClickSignIn(View view) {
         User signInUser = new User(emailAddress.getValue(), password.getValue());
         userSignInMutableLiveData.setValue(signInUser);

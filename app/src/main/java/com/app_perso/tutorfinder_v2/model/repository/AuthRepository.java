@@ -3,6 +3,7 @@ package com.app_perso.tutorfinder_v2.model.repository;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
 import com.app_perso.tutorfinder_v2.model.Role;
 import com.app_perso.tutorfinder_v2.model.Status;
@@ -15,12 +16,19 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import java.util.Objects;
 
 public class AuthRepository {
+    private final String COLLECTION_NAME = "tutor_finder_users";
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    private CollectionReference collectionReference = firebaseFirestore.collection(COLLECTION_NAME);
 
     public void signUpUserFirebase(User user, @NonNull final OnSuccessListener successListener,
                                    @NonNull final OnFailureListener failureListener) throws RuntimeException {
@@ -48,7 +56,13 @@ public class AuthRepository {
                                                 if (user.getRole().equals(Role.TUTOR)) {
                                                     createdUser.setStatus(Status.PENDING);
                                                 }
-                                                successListener.onSuccess(createdUser);
+
+                                                initCurrentUser(createdUser, new OnSuccessListener() {
+                                                    @Override
+                                                    public void onSuccess(Object o) {
+                                                        successListener.onSuccess(createdUser);
+                                                    }
+                                                },failureListener);
 
                                             } else {
                                                 //problems with sending verification email
@@ -57,10 +71,39 @@ public class AuthRepository {
                                         }
                                     });
                         } else {
-                            failureListener.onFailure(task.getException());
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
                         }
                     }
                 });
+    }
+
+    //Acts as an initializer
+    private void initCurrentUser(final User user, @NonNull final OnSuccessListener successListener,
+                                                  @NonNull final OnFailureListener failureListener) throws RuntimeException {
+
+        if (user == null) {
+            throw new RuntimeException("Initialization user is null");
+        }
+
+        DocumentReference uidRef = collectionReference.document(user.getId());
+        uidRef.get().addOnCompleteListener(uidTask -> {
+            if (uidTask.isSuccessful()) {
+                DocumentSnapshot document = uidTask.getResult();
+                if (!Objects.requireNonNull(document).exists()) {
+                    uidRef.set(user.genUserForDb()).addOnCompleteListener(userCreationTask -> {
+                        if (userCreationTask.isSuccessful()) {
+                            successListener.onSuccess(user);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(userCreationTask.getException()));
+                        }
+                    });
+                } else {
+                    //Todo: sessions
+                }
+            } else {
+                failureListener.onFailure(Objects.requireNonNull(uidTask.getException()));
+            }
+        });
     }
 
     //Use UnsupportedOperationException for fatal errors
@@ -96,4 +139,5 @@ public class AuthRepository {
                     }
                 });
     }
+
 }
