@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.databinding.FragmentSignUpBinding;
 import com.app_perso.tutorfinder_v2.model.User;
+import com.app_perso.tutorfinder_v2.view.signInSignUp.SignInSignUpUtils;
 import com.app_perso.tutorfinder_v2.viewModel.SignInSignUpViewModel;
 
 import java.util.Objects;
@@ -48,7 +49,9 @@ public class SignUpFragment extends Fragment {
             public void onChanged(@Nullable User signUpUser) {
 
                 //Reset error messages
-                resetErrorMessages();
+                SignInSignUpUtils.resetErrorMessages(binding.filledTextFieldUsername,
+                        binding.filledTextFieldEmail,
+                        binding.filledTextFieldPasswd);
 
                 //Disable sign up button
                 signUpButton.setEnabled(false);
@@ -58,38 +61,54 @@ public class SignUpFragment extends Fragment {
                     binding.filledTextFieldUsername.setError(getString(R.string.username_required_field));
                     binding.filledTextFieldUsername.requestFocus();
 
+                    //Re-enable sign up button
+                    signUpButton.setEnabled(true);
+
                 //Email address is a required field
                 } else if (TextUtils.isEmpty(Objects.requireNonNull(signUpUser).getEmail())) {
                     binding.filledTextFieldEmail.setError(getString(R.string.email_required_field));
                     binding.filledTextFieldEmail.requestFocus();
+
+                    //Re-enable sign up button
+                    signUpButton.setEnabled(true);
 
                 //Check validity of the email address input
                 } else if (signUpUser.isNotValidEmail()) {
                     binding.filledTextFieldEmail.setError(getString(R.string.email_required_field));
                     binding.filledTextFieldEmail.requestFocus();
 
+                    //Re-enable sign up button
+                    signUpButton.setEnabled(true);
+
                 //Password is a required field
                 } else if (TextUtils.isEmpty(Objects.requireNonNull(signUpUser).getPassword())) {
                     binding.filledTextFieldPasswd.setError(getString(R.string.password_required_field));
                     binding.filledTextFieldPasswd.requestFocus();
+
+                    //Re-enable sign up button
+                    signUpButton.setEnabled(true);
 
                 //Check validity of the password
                 } else if (signUpUser.isNotValidPassword()) {
                     binding.filledTextFieldPasswd.setError(getString(R.string.password_validity));
                     binding.filledTextFieldPasswd.requestFocus();
 
+                    //Re-enable sign up button
+                    signUpButton.setEnabled(true);
+
                 } else {
                     //Register new user
                     signInSignUpViewModel.signUpUser(signUpUser);
                     signInSignUpViewModel.getSignUpOutcome().observe(getViewLifecycleOwner(), stringOutcome -> {
-                        //Re-enable sign up button
-                        signUpButton.setEnabled(true);
 
                         if (!stringOutcome.isEmpty()) {
                             Toast.makeText(getContext(), stringOutcome, Toast.LENGTH_LONG).show();
 
                             //Reset sign up outcome
                             signInSignUpViewModel.setSignUpOutcome("");
+
+                            //Re-enable sign up button
+                            signUpButton.setEnabled(true);
                         }
                     });
                 }
@@ -112,9 +131,4 @@ public class SignUpFragment extends Fragment {
         return view;
     }
 
-    private void resetErrorMessages() {
-        binding.filledTextFieldUsername.setError(null);
-        binding.filledTextFieldEmail.setError(null);
-        binding.filledTextFieldPasswd.setError(null);
-    }
 }

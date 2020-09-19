@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.app_perso.tutorfinder_v2.model.Role;
 import com.app_perso.tutorfinder_v2.model.Status;
 import com.app_perso.tutorfinder_v2.model.User;
+import com.app_perso.tutorfinder_v2.view.signInSignUp.SignInSignUpUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,6 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
+import java.util.Map;
 import java.util.Objects;
 
 public class AuthRepository {
@@ -97,8 +99,6 @@ public class AuthRepository {
                             failureListener.onFailure(Objects.requireNonNull(userCreationTask.getException()));
                         }
                     });
-                } else {
-                    //Todo: sessions
                 }
             } else {
                 failureListener.onFailure(Objects.requireNonNull(uidTask.getException()));
@@ -106,9 +106,32 @@ public class AuthRepository {
         });
     }
 
+    private void getUserInDb(final String userId, @NonNull final OnSuccessListener successListener,
+                                 @NonNull final OnFailureListener failureListener) throws RuntimeException {
+
+        if (userId == null) {
+            throw new RuntimeException("Initialization user is null");
+        }
+
+        DocumentReference uidRef = collectionReference.document(userId);
+        uidRef.get().addOnCompleteListener(uidTask -> {
+            if (uidTask.isSuccessful()) {
+                DocumentSnapshot document = uidTask.getResult();
+                if (Objects.requireNonNull(document).exists()) {
+                    successListener.onSuccess(document.getData());
+                } else {
+                    failureListener.onFailure(Objects.requireNonNull(uidTask.getException()));
+                }
+            } else {
+                failureListener.onFailure(Objects.requireNonNull(uidTask.getException()));
+            }
+        });
+
+    }
+
     //Use UnsupportedOperationException for fatal errors
     //Use InstantiationException for warnings
-    public void signinUserFirebase(User user, @NonNull final OnSuccessListener successListener,
+    public void signInUserFirebase(User user, @NonNull final OnSuccessListener successListener,
                                   @NonNull final OnFailureListener failureListener) {
 
         if (firebaseAuth == null) {
@@ -116,22 +139,42 @@ public class AuthRepository {
         }
         final FirebaseAuth finalFirebaseAuth = firebaseAuth;
 
-        firebaseAuth.signInWithEmailAndPassword(user.getEmail(), user.getPassword())
+        finalFirebaseAuth.signInWithEmailAndPassword(user.getEmail(), user.getPassword())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                            User signedInUser;
+                            FirebaseUser firebaseUser = finalFirebaseAuth.getCurrentUser();
 
-                            //check if email wasn't verified unless the user is an admin
-                            if (!Objects.requireNonNull(firebaseUser).isEmailVerified()) {
-                                signedInUser = new User(firebaseUser);
-                                signedInUser.setRole(user.getRole());
-                                successListener.onSuccess(signedInUser);
-                            } else {
-                                failureListener.onFailure(new InstantiationException("Warning email has not been verified yet"));
-                            }
+                            //Retrieve corresponding user's info in the database
+                            getUserInDb(firebaseUser.getUid(), new OnSuccessListener() {
+                                @Override
+                                public void onSuccess(Object o) {
+                                    User signedInUser = new User(firebaseUser);
+
+                                    try {
+                                        Map<String, Object> userInfoInDb = (Map<String, Object>) o;
+                                        signedInUser.setUsername((String) userInfoInDb.get("username"));
+                                        signedInUser.setRole(Role.valueOf((String) userInfoInDb.get("role")));
+
+                                        if (signedInUser.getRole().equals(Role.TUTOR)) {
+                                            signedInUser.setStatus(Status.valueOf((String) userInfoInDb.get("status")));
+                                        }
+
+                                        //User can sign in if email is verified or he/she is the admin
+                                        if (Objects.requireNonNull(firebaseUser).isEmailVerified() || signedInUser.getRole().equals(Role.ADMIN)) {
+                                            successListener.onSuccess(signedInUser);
+                                        } else {
+                                            Log.d(SignInSignUpUtils.TAG, "Email not verified!");
+                                            failureListener.onFailure(new InstantiationException("Warning email has not been verified yet"));
+                                        }
+
+                                    } catch (Exception e) {
+                                        Log.d(SignInSignUpUtils.TAG, "Firestore document's casting failed");
+                                        failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                                    }
+                                }
+                            }, failureListener);
                         } else {
                             //problems with sign in
                             failureListener.onFailure(Objects.requireNonNull(task.getException()));

@@ -17,8 +17,10 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 public class SignInSignUpViewModel extends ViewModel {
     public MutableLiveData<String> username = new MutableLiveData<>();
-    public MutableLiveData<String> emailAddress = new MutableLiveData<>();
-    public MutableLiveData<String> password = new MutableLiveData<>();
+    public MutableLiveData<String> emailAddressSignIn = new MutableLiveData<>();
+    public MutableLiveData<String> passwordSignIn = new MutableLiveData<>();
+    public MutableLiveData<String> emailAddressSignUp = new MutableLiveData<>();
+    public MutableLiveData<String> passwordSignUp = new MutableLiveData<>();
     public MutableLiveData<String> signUpOutcome = new MutableLiveData<>();
     public MutableLiveData<String> signInOutcome = new MutableLiveData<>();
     public final ObservableBoolean optionStudent = new ObservableBoolean(true);
@@ -70,13 +72,17 @@ public class SignInSignUpViewModel extends ViewModel {
         signUpOutcome.setValue(signUpOutcomeText);
     }
 
+    public void setSignInOutcome(String signInOutcomeText) {
+        signInOutcome.setValue(signInOutcomeText);
+    }
+
     public void onClickSignIn(View view) {
-        User signInUser = new User(emailAddress.getValue(), password.getValue());
+        User signInUser = new User(emailAddressSignIn.getValue(), passwordSignIn.getValue());
         userSignInMutableLiveData.setValue(signInUser);
     }
 
     public void onClickSignUp(View view) {
-        User signUpUser = new User(username.getValue(), emailAddress.getValue(), password.getValue(), genSelectedRole());
+        User signUpUser = new User(username.getValue(), emailAddressSignUp.getValue(), passwordSignUp.getValue(), genSelectedRole());
         userSignUpMutableLiveData.setValue(signUpUser);
     }
 
@@ -85,7 +91,7 @@ public class SignInSignUpViewModel extends ViewModel {
     }
 
     public void signInUser(User user) {
-        authRepository.signinUserFirebase(user, signInSuccess, signInFailure);
+        authRepository.signInUserFirebase(user, signInSuccess, signInFailure);
     }
 
     private Role genSelectedRole() {
@@ -112,7 +118,7 @@ public class SignInSignUpViewModel extends ViewModel {
     private OnSuccessListener signInSuccess = new OnSuccessListener() {
         @Override
         public void onSuccess(Object o) {
-            signInOutcome.setValue("Sign in successfull.");
+            signInOutcome.setValue("Sign in successful.");
         }
     };
 
@@ -133,6 +139,11 @@ public class SignInSignUpViewModel extends ViewModel {
         @Override
         public void onFailure(@NonNull Exception e) {
             String failure = "Authentication failed.";
+            // If sign in fails, display a message to the user.
+            if (e instanceof InstantiationException) {
+                failure = "Sign in failed: you need to verify your email address";
+            }
+
             // If sign up fails, display a message to the user.
             signInOutcome.setValue(failure);
         }
