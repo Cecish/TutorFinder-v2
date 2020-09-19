@@ -1,5 +1,7 @@
 package com.app_perso.tutorfinder_v2.model.repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.app_perso.tutorfinder_v2.model.Role;
@@ -11,6 +13,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 
 import java.util.Objects;
@@ -54,6 +58,40 @@ public class AuthRepository {
                                     });
                         } else {
                             failureListener.onFailure(task.getException());
+                        }
+                    }
+                });
+    }
+
+    //Use UnsupportedOperationException for fatal errors
+    //Use InstantiationException for warnings
+    public void signinUserFirebase(User user, @NonNull final OnSuccessListener successListener,
+                                  @NonNull final OnFailureListener failureListener) {
+
+        if (firebaseAuth == null) {
+            firebaseAuth = FirebaseAuth.getInstance();
+        }
+        final FirebaseAuth finalFirebaseAuth = firebaseAuth;
+
+        firebaseAuth.signInWithEmailAndPassword(user.getEmail(), user.getPassword())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                            User signedInUser;
+
+                            //check if email wasn't verified unless the user is an admin
+                            if (!Objects.requireNonNull(firebaseUser).isEmailVerified()) {
+                                signedInUser = new User(firebaseUser);
+                                signedInUser.setRole(user.getRole());
+                                successListener.onSuccess(signedInUser);
+                            } else {
+                                failureListener.onFailure(new InstantiationException("Warning email has not been verified yet"));
+                            }
+                        } else {
+                            //problems with sign in
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
                         }
                     }
                 });

@@ -20,6 +20,7 @@ public class SignInSignUpViewModel extends ViewModel {
     public MutableLiveData<String> emailAddress = new MutableLiveData<>();
     public MutableLiveData<String> password = new MutableLiveData<>();
     public MutableLiveData<String> signUpOutcome = new MutableLiveData<>();
+    public MutableLiveData<String> signInOutcome = new MutableLiveData<>();
     public final ObservableBoolean optionStudent = new ObservableBoolean(true);
     public final ObservableBoolean optionTutor = new ObservableBoolean();
 
@@ -56,6 +57,15 @@ public class SignInSignUpViewModel extends ViewModel {
         return signUpOutcome;
     }
 
+    public MutableLiveData<String> getSignInOutcome() {
+
+        if (signInOutcome == null) {
+            signInOutcome = new MutableLiveData<>();
+        }
+
+        return signInOutcome;
+    }
+
     public void onClickSignIn(View view) {
         User signInUser = new User(emailAddress.getValue(), password.getValue());
         userSignInMutableLiveData.setValue(signInUser);
@@ -68,6 +78,10 @@ public class SignInSignUpViewModel extends ViewModel {
 
     public void signUpUser(User user) {
         authRepository.signUpUserFirebase(user, signUpSuccess, signUpFailure);
+    }
+
+    public void signInUser(User user) {
+        authRepository.signinUserFirebase(user, signInSuccess, signInFailure);
     }
 
     private Role genSelectedRole() {
@@ -91,6 +105,13 @@ public class SignInSignUpViewModel extends ViewModel {
         }
     };
 
+    private OnSuccessListener signInSuccess = new OnSuccessListener() {
+        @Override
+        public void onSuccess(Object o) {
+            signInOutcome.setValue("Sign in successfull.");
+        }
+    };
+
     private OnFailureListener signUpFailure = new OnFailureListener() {
         @Override
         public void onFailure(@NonNull Exception e) {
@@ -101,6 +122,15 @@ public class SignInSignUpViewModel extends ViewModel {
             }
 
             signUpOutcome.setValue(failure);
+        }
+    };
+
+    private OnFailureListener signInFailure = new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+            String failure = "Authentication failed.";
+            // If sign up fails, display a message to the user.
+            signInOutcome.setValue(failure);
         }
     };
 }
