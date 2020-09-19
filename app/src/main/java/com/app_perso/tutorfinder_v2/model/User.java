@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class User {
     private String id;
     private String username;
@@ -32,6 +35,10 @@ public class User {
         id = user.getUid();
         email = user.getEmail();
         username = user.getDisplayName();
+    }
+
+    public  String getId() {
+        return this.id;
     }
 
     public String getUsername() {
@@ -82,6 +89,17 @@ public class User {
         return this.password == null || this.password.length() < 6;
     }
 
+    public Map<String, Object> genUserForDb() {
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("id", id);
+        userMap.put("username", username);
+        userMap.put("email", email);
+        userMap.put("role", role);
+        userMap.put("status", status);
+
+        return userMap;
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -90,6 +108,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
+                ", status=" + status + '\'' +
                 '}';
     }
 }
