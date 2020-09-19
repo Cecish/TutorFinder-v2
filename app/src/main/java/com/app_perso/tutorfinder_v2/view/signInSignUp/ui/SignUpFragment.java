@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -24,7 +25,7 @@ import java.util.Objects;
 public class SignUpFragment extends Fragment {
     private SignInSignUpViewModel signInSignUpViewModel;
     private FragmentSignUpBinding binding;
-    private RadioButton radioButton;
+    private Button signUpButton;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -48,6 +49,9 @@ public class SignUpFragment extends Fragment {
 
                 //Reset error messages
                 resetErrorMessages();
+
+                //Disable sign up button
+                signUpButton.setEnabled(false);
 
                 //Username is a require field
                 if (TextUtils.isEmpty(Objects.requireNonNull(signUpUser).getUsername())) {
@@ -78,8 +82,14 @@ public class SignUpFragment extends Fragment {
                     //Register new user
                     signInSignUpViewModel.signUpUser(signUpUser);
                     signInSignUpViewModel.getSignUpOutcome().observe(getViewLifecycleOwner(), stringOutcome -> {
+                        //Re-enable sign up button
+                        signUpButton.setEnabled(true);
+
                         if (!stringOutcome.isEmpty()) {
                             Toast.makeText(getContext(), stringOutcome, Toast.LENGTH_LONG).show();
+
+                            //Reset sign up outcome
+                            signInSignUpViewModel.setSignUpOutcome("");
                         }
                     });
                 }
@@ -93,8 +103,10 @@ public class SignUpFragment extends Fragment {
         binding = FragmentSignUpBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
+        signUpButton = (Button) view.findViewById(R.id.signUp);
+
         //Init radio buttons checks
-        radioButton = (RadioButton) view.findViewById(R.id.radioStudent);
+        RadioButton radioButton = (RadioButton) view.findViewById(R.id.radioStudent);
         radioButton.setChecked(true);
 
         return view;
