@@ -24,6 +24,7 @@ import com.app_perso.tutorfinder_v2.view.AdminHomeActivity;
 import com.app_perso.tutorfinder_v2.view.StudentHomeActivity;
 import com.app_perso.tutorfinder_v2.view.TutorHomeActivity;
 import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
+import com.app_perso.tutorfinder_v2.view.forgottenPassword.ForgottenPasswordActivity;
 import com.app_perso.tutorfinder_v2.viewModel.SignInSignUpViewModel;
 
 import java.util.Objects;
@@ -49,6 +50,7 @@ public class SignInFragment extends Fragment  {
 
         signInSignUpViewModel = new ViewModelProvider(requireActivity()).get(SignInSignUpViewModel.class);
         binding.setSignInSignUpViewModel(signInSignUpViewModel);
+        binding.setFragment(this);
 
         signInSignUpViewModel.getSignInUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
@@ -146,5 +148,9 @@ public class SignInFragment extends Fragment  {
             //Re-enable sign up button
             signInButton.setEnabled(true);
         }
+    }
+
+    public void goToResetPasswdActivity(View view) {
+        startActivity(new Intent(requireContext(), ForgottenPasswordActivity.class));
     }
 }
