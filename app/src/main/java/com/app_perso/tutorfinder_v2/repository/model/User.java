@@ -1,16 +1,20 @@
-package com.app_perso.tutorfinder_v2.model;
+package com.app_perso.tutorfinder_v2.repository.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Patterns;
 
 import androidx.annotation.NonNull;
 
+import com.app_perso.tutorfinder_v2.util.Role;
+import com.app_perso.tutorfinder_v2.util.Status;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class User {
+public class User implements Parcelable {
     private String id;
     private String username;
     private String email;
@@ -111,4 +115,45 @@ public class User {
                 ", status=" + status + '\'' +
                 '}';
     }
+
+
+    // Parcelling part
+    public User(Parcel in){
+        String[] data = new String[6];
+
+        in.readStringArray(data);
+        // the order needs to be the same as in writeToParcel() method
+        this.id = data[0];
+        this.username = data[1];
+        this.email = data[2];
+        this.password = data[3];
+        this.role = Role.valueOf(data[4]);
+        this.status = Status.valueOf(data[5]);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringArray(new String[] {
+                this.id,
+                this.username,
+                this.email,
+                this.password,
+                this.role.name(),
+                this.status.name()
+        });
+    }
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

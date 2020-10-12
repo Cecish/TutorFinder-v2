@@ -7,9 +7,10 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.app_perso.tutorfinder_v2.model.Role;
-import com.app_perso.tutorfinder_v2.model.User;
-import com.app_perso.tutorfinder_v2.model.repository.AuthRepository;
+import com.app_perso.tutorfinder_v2.util.Role;
+import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.repository.AuthRepository;
+import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -17,14 +18,18 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 public class SignInSignUpViewModel extends ViewModel {
     public MutableLiveData<String> username = new MutableLiveData<>();
-    public MutableLiveData<String> emailAddress = new MutableLiveData<>();
-    public MutableLiveData<String> password = new MutableLiveData<>();
+    public MutableLiveData<String> emailAddressSignIn = new MutableLiveData<>();
+    public MutableLiveData<String> passwordSignIn = new MutableLiveData<>();
+    public MutableLiveData<String> emailAddressSignUp = new MutableLiveData<>();
+    public MutableLiveData<String> passwordSignUp = new MutableLiveData<>();
     public MutableLiveData<String> signUpOutcome = new MutableLiveData<>();
+    public MutableLiveData<String> signInOutcome = new MutableLiveData<>();
     public final ObservableBoolean optionStudent = new ObservableBoolean(true);
     public final ObservableBoolean optionTutor = new ObservableBoolean();
 
     private MutableLiveData<User> userSignUpMutableLiveData;
     private MutableLiveData<User> userSignInMutableLiveData;
+    private User signedInUser;
     private AuthRepository authRepository;
 
     public SignInSignUpViewModel() {
@@ -47,6 +52,10 @@ public class SignInSignUpViewModel extends ViewModel {
         return userSignInMutableLiveData;
     }
 
+    public User getSignedInUser() {
+        return signedInUser;
+    }
+
     public MutableLiveData<String> getSignUpOutcome() {
 
         if (signUpOutcome == null) {
@@ -56,22 +65,39 @@ public class SignInSignUpViewModel extends ViewModel {
         return signUpOutcome;
     }
 
+    public MutableLiveData<String> getSignInOutcome() {
+
+        if (signInOutcome == null) {
+            signInOutcome = new MutableLiveData<>();
+        }
+
+        return signInOutcome;
+    }
+
     public void setSignUpOutcome(String signUpOutcomeText) {
         signUpOutcome.setValue(signUpOutcomeText);
     }
 
+    public void setSignInOutcome(String signInOutcomeText) {
+        signInOutcome.setValue(signInOutcomeText);
+    }
+
     public void onClickSignIn(View view) {
-        User signInUser = new User(emailAddress.getValue(), password.getValue());
+        User signInUser = new User(emailAddressSignIn.getValue(), passwordSignIn.getValue());
         userSignInMutableLiveData.setValue(signInUser);
     }
 
     public void onClickSignUp(View view) {
-        User signUpUser = new User(username.getValue(), emailAddress.getValue(), password.getValue(), genSelectedRole());
+        User signUpUser = new User(username.getValue(), emailAddressSignUp.getValue(), passwordSignUp.getValue(), genSelectedRole());
         userSignUpMutableLiveData.setValue(signUpUser);
     }
 
     public void signUpUser(User user) {
         authRepository.signUpUserFirebase(user, signUpSuccess, signUpFailure);
+    }
+
+    public void signInUser(User user) {
+        authRepository.signInUserFirebase(user, signInSuccess, signInFailure);
     }
 
     private Role genSelectedRole() {
@@ -95,6 +121,14 @@ public class SignInSignUpViewModel extends ViewModel {
         }
     };
 
+    private OnSuccessListener signInSuccess = new OnSuccessListener() {
+        @Override
+        public void onSuccess(Object o) {
+            signedInUser = (User) o;
+            signInOutcome.setValue(SignInSignUpUtils.SIGNED_IN);
+        }
+    };
+
     private OnFailureListener signUpFailure = new OnFailureListener() {
         @Override
         public void onFailure(@NonNull Exception e) {
@@ -105,6 +139,20 @@ public class SignInSignUpViewModel extends ViewModel {
             }
 
             signUpOutcome.setValue(failure);
+        }
+    };
+
+    private OnFailureListener signInFailure = new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+            String failure = "Authentication failed.";
+            // If sign in fails, display a message to the user.
+            if (e instanceof InstantiationException) {
+                failure = "Sign in failed: you need to verify your email address";
+            }
+
+            // If sign up fails, display a message to the user.
+            signInOutcome.setValue(failure);
         }
     };
 }

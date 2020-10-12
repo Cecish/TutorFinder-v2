@@ -29,7 +29,9 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@={SignInSignUpViewModel.emailAddress}"/>
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:text="@={SignInSignUpViewModel.emailAddressSignIn}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -45,7 +47,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:text="@={SignInSignUpViewModel.password}"/>
+                android:maxLines="1"
+                android:text="@={SignInSignUpViewModel.passwordSignIn}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <View
