@@ -1,4 +1,6 @@
 <resources>
+
+    <!-- Sign in / Sign up -->
     <string name="app_name">Tutor Finder</string>
     <string name="tab_text_1">Sign in</string>
     <string name="tab_text_2">Sign up</string>
@@ -16,4 +18,9 @@
     <string name="password_required_field">You must provide a password</string>
     <string name="email_validity">Enter a valid E-mail Address</string>
     <string name="password_validity">Enter a password of at least 6 digits</string>
+
+    <!-- Forgotten password -->
+    <string name="password_reset">Reset your password</string>
+    <string name="password_reset2">Reset password</string>
+    <string name="password_reset_guide">Enter the email address associated with your account to receive a password reset email.</string>
 </resources>

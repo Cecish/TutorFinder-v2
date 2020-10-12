@@ -32,11 +32,7 @@ public class AuthRepository {
 
     public void signUpUserFirebase(User user, @NonNull final OnSuccessListener successListener,
                                    @NonNull final OnFailureListener failureListener) throws RuntimeException {
-
-        if (firebaseAuth == null) {
-            firebaseAuth = FirebaseAuth.getInstance();
-        }
-        final FirebaseAuth finalFirebaseAuth = firebaseAuth;
+        final FirebaseAuth finalFirebaseAuth = initFirebaseAuth();
 
         firebaseAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -134,11 +130,7 @@ public class AuthRepository {
     //Use InstantiationException for warnings
     public void signInUserFirebase(User user, @NonNull final OnSuccessListener successListener,
                                   @NonNull final OnFailureListener failureListener) {
-
-        if (firebaseAuth == null) {
-            firebaseAuth = FirebaseAuth.getInstance();
-        }
-        final FirebaseAuth finalFirebaseAuth = firebaseAuth;
+        final FirebaseAuth finalFirebaseAuth = initFirebaseAuth();
 
         finalFirebaseAuth.signInWithEmailAndPassword(user.getEmail(), user.getPassword())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -185,4 +177,28 @@ public class AuthRepository {
         }, failureListener);
     }
 
+    public void resetPasswordFirebase(String emailAddress, @NonNull final OnSuccessListener successListener,
+                                      @NonNull final OnFailureListener failureListener) throws RuntimeException {
+        final FirebaseAuth finalFirebaseAuth = initFirebaseAuth();
+
+        finalFirebaseAuth.sendPasswordResetEmail(emailAddress)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            successListener.onSuccess(emailAddress);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
+    private FirebaseAuth initFirebaseAuth() {
+        if (firebaseAuth == null) {
+            firebaseAuth = FirebaseAuth.getInstance();
+        }
+
+        return firebaseAuth;
+    }
 }
