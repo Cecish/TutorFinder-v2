@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".view.forgottenPassword.ForgottenPasswordActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.AdminHomeActivity"
             android:screenOrientation="portrait" />
