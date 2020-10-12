@@ -1,23 +1,77 @@
 package com.app_perso.tutorfinder_v2.view.forgottenPassword;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.app_perso.tutorfinder_v2.R;
+import com.app_perso.tutorfinder_v2.databinding.ActivityForgottenPasswordBinding;
+import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
+import com.app_perso.tutorfinder_v2.util.StringUtils;
+import com.app_perso.tutorfinder_v2.viewModel.ResetPasswordViewModel;
+
 
 public class ForgottenPasswordActivity extends AppCompatActivity {
+    private ActivityForgottenPasswordBinding binding;
+    private Button resetButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forgotten_password);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_forgotten_password);
+        ResetPasswordViewModel resetPasswordViewModel = new ViewModelProvider(this).get(ResetPasswordViewModel.class);
+        binding.setResetPasswordViewModel(resetPasswordViewModel);
+        resetButton = (Button) findViewById(R.id.resetPassword);
 
         setUpToolbar();
+
+        resetPasswordViewModel.getEmailAddressResetMutableLiveData().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String emailAddress) {
+
+                //Reset error messages
+                SignInSignUpUtils.resetErrorMessages(binding.filledTextFieldEmail);
+
+                //Disable reset button
+                resetButton.setEnabled(false);
+
+                if (TextUtils.isEmpty(emailAddress)) {
+                    binding.filledTextFieldEmail.setError("Enter an E-Mail Address");
+                    binding.filledTextFieldEmail.requestFocus();
+
+                    //Re-enable sign up button
+                    resetButton.setEnabled(true);
+
+                } else if (StringUtils.isNotValidEmail(emailAddress)) {
+                    binding.filledTextFieldEmail.setError("Enter a Valid E-mail Address");
+                    binding.filledTextFieldEmail.requestFocus();
+
+                    //Re-enable sign up button
+                    resetButton.setEnabled(true);
+
+                } else { //TODO communication with Firebase
+                    //Sign in user
+                    /*signInSignUpViewModel.signInUser(signInUser);
+                    signInSignUpViewModel.getSignInOutcome().observe(getViewLifecycleOwner(), stringOutcome -> {
+
+                        if (!stringOutcome.isEmpty()) {
+                            doOutcome(stringOutcome, signInSignUpViewModel.getSignedInUser(), getActivity());
+                        }
+                    });*/
+                }
+
+            }
+        });
     }
 
     @Override

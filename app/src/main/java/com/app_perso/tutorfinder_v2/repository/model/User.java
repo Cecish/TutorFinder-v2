@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.Status;
+import com.app_perso.tutorfinder_v2.util.StringUtils;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
@@ -86,7 +87,7 @@ public class User implements Parcelable {
     }
 
     public boolean isNotValidEmail() {
-        return this.email == null || TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return StringUtils.isNotValidEmail(this.email);
     }
 
     public boolean isNotValidPassword() {
