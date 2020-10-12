@@ -1,31 +1,15 @@
-package com.app_perso.tutorfinder_v2.view.splashScreen;
+package com.app_perso.tutorfinder_v2.util;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
-import com.app_perso.tutorfinder_v2.view.signInSignUp.ui.SignInSignUpActivity;
 
 public class AnimationSplashScreenUtils {
-    private final static int SPLASH_DISPLAY_LENGTH = 2500;
+    public final static int SPLASH_DISPLAY_LENGTH = 2500;
     private final static int APP_NAME_DELAY = 1000;
-
-    public static void delayNextScreen(final Activity packageContext) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Create an intent that will start the main app activity
-                //Intent mainIntent = new Intent(packageContext, MainActivity.class);
-                Intent mainIntent = new Intent(packageContext, SignInSignUpActivity.class);
-                packageContext.startActivity(mainIntent);
-                packageContext.finish();
-            }
-        }, SPLASH_DISPLAY_LENGTH);
-    }
 
     public static void animateAppName(final TextView textView, final String text) {
         animateLogo(textView);

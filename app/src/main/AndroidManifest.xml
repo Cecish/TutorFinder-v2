@@ -9,13 +9,23 @@
         android:roundIcon="@mipmap/ic_launcher_tutor_finder_v2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".view.AdminHomeActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".view.TutorHomeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.StudentHomeActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".view.signInSignUp.ui.SignInSignUpActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".TempActivity" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait" />
+        <activity android:name=".TempActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.splashScreen.SplashScreenActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
