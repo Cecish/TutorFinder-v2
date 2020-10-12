@@ -1,14 +1,13 @@
-package com.app_perso.tutorfinder_v2.model.repository;
+package com.app_perso.tutorfinder_v2.repository;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 
-import com.app_perso.tutorfinder_v2.model.Role;
-import com.app_perso.tutorfinder_v2.model.Status;
-import com.app_perso.tutorfinder_v2.model.User;
-import com.app_perso.tutorfinder_v2.view.signInSignUp.SignInSignUpUtils;
+import com.app_perso.tutorfinder_v2.util.Role;
+import com.app_perso.tutorfinder_v2.util.Status;
+import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -19,7 +18,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -57,11 +55,14 @@ public class AuthRepository {
 
                                                 if (user.getRole().equals(Role.TUTOR)) {
                                                     createdUser.setStatus(Status.PENDING);
+                                                } else {
+                                                    createdUser.setStatus(Status.NOT_APPLICABLE);
                                                 }
 
                                                 initCurrentUser(createdUser, new OnSuccessListener() {
                                                     @Override
                                                     public void onSuccess(Object o) {
+                                                        firebaseAuth = null;
                                                         successListener.onSuccess(createdUser);
                                                     }
                                                 },failureListener);
@@ -147,40 +148,41 @@ public class AuthRepository {
                             FirebaseUser firebaseUser = finalFirebaseAuth.getCurrentUser();
 
                             //Retrieve corresponding user's info in the database
-                            getUserInDb(firebaseUser.getUid(), new OnSuccessListener() {
-                                @Override
-                                public void onSuccess(Object o) {
-                                    User signedInUser = new User(firebaseUser);
-
-                                    try {
-                                        Map<String, Object> userInfoInDb = (Map<String, Object>) o;
-                                        signedInUser.setUsername((String) userInfoInDb.get("username"));
-                                        signedInUser.setRole(Role.valueOf((String) userInfoInDb.get("role")));
-
-                                        if (signedInUser.getRole().equals(Role.TUTOR)) {
-                                            signedInUser.setStatus(Status.valueOf((String) userInfoInDb.get("status")));
-                                        }
-
-                                        //User can sign in if email is verified or he/she is the admin
-                                        if (Objects.requireNonNull(firebaseUser).isEmailVerified() || signedInUser.getRole().equals(Role.ADMIN)) {
-                                            successListener.onSuccess(signedInUser);
-                                        } else {
-                                            Log.d(SignInSignUpUtils.TAG, "Email not verified!");
-                                            failureListener.onFailure(new InstantiationException("Warning email has not been verified yet"));
-                                        }
-
-                                    } catch (Exception e) {
-                                        Log.d(SignInSignUpUtils.TAG, "Firestore document's casting failed");
-                                        failureListener.onFailure(Objects.requireNonNull(task.getException()));
-                                    }
-                                }
-                            }, failureListener);
+                            getUserInDbAux(firebaseUser, successListener, failureListener);
                         } else {
                             //problems with sign in
                             failureListener.onFailure(Objects.requireNonNull(task.getException()));
                         }
                     }
                 });
+    }
+
+    public void getUserInDbAux(FirebaseUser firebaseUser, OnSuccessListener successListener, OnFailureListener failureListener) {
+        getUserInDb(firebaseUser.getUid(), new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                User signedInUser = new User(firebaseUser);
+
+                try {
+                    Map<String, Object> userInfoInDb = (Map<String, Object>) o;
+                    signedInUser.setUsername((String) userInfoInDb.get("username"));
+                    signedInUser.setRole(Role.valueOf((String) userInfoInDb.get("role")));
+                    signedInUser.setStatus(Status.valueOf((String) userInfoInDb.get("status")));
+
+                    //User can sign in if email is verified or he/she is the admin
+                    if (Objects.requireNonNull(firebaseUser).isEmailVerified() || signedInUser.getRole().equals(Role.ADMIN)) {
+                        successListener.onSuccess(signedInUser);
+                    } else {
+                        Log.d(SignInSignUpUtils.TAG, "Email not verified!");
+                        failureListener.onFailure(new InstantiationException("Warning email has not been verified yet"));
+                    }
+
+                } catch (Exception e) {
+                    Log.d(SignInSignUpUtils.TAG, "Firestore document's casting failed");
+                    failureListener.onFailure(Objects.requireNonNull(e));
+                }
+            }
+        }, failureListener);
     }
 
 }

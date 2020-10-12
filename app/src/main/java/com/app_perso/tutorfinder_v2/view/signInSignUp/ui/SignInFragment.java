@@ -1,5 +1,7 @@
 package com.app_perso.tutorfinder_v2.view.signInSignUp.ui;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,8 +18,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.databinding.FragmentSignInBinding;
-import com.app_perso.tutorfinder_v2.model.User;
-import com.app_perso.tutorfinder_v2.view.signInSignUp.SignInSignUpUtils;
+import com.app_perso.tutorfinder_v2.util.Role;
+import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.view.AdminHomeActivity;
+import com.app_perso.tutorfinder_v2.view.StudentHomeActivity;
+import com.app_perso.tutorfinder_v2.view.TutorHomeActivity;
+import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
 import com.app_perso.tutorfinder_v2.viewModel.SignInSignUpViewModel;
 
 import java.util.Objects;
@@ -87,14 +93,9 @@ public class SignInFragment extends Fragment  {
                     //Sign in user
                     signInSignUpViewModel.signInUser(signInUser);
                     signInSignUpViewModel.getSignInOutcome().observe(getViewLifecycleOwner(), stringOutcome -> {
+
                         if (!stringOutcome.isEmpty()) {
-                            Toast.makeText(getContext(), stringOutcome, Toast.LENGTH_LONG).show();
-
-                            //Reset sign in outcome
-                            signInSignUpViewModel.setSignInOutcome("");
-
-                            //Re-enable sign up button
-                            signInButton.setEnabled(true);
+                            doOutcome(stringOutcome, signInSignUpViewModel.getSignedInUser(), getActivity());
                         }
                     });
                 }
@@ -112,5 +113,38 @@ public class SignInFragment extends Fragment  {
 
         //set variables in Binding
         return binding.getRoot();
+    }
+
+    private void doOutcome(String outcome, User signInUser, Activity activity) {
+        //Sign in successful
+        if (outcome.equals(SignInSignUpUtils.SIGNED_IN)) {
+            Intent intent = null;
+
+            if (signInUser.getRole().equals(Role.STUDENT)) {
+                intent = new Intent(activity, StudentHomeActivity.class);
+
+            } else if (signInUser.getRole().equals(Role.TUTOR)) {
+                intent = new Intent(activity, TutorHomeActivity.class);
+
+            } else if (signInUser.getRole().equals(Role.ADMIN)) {
+                intent = new Intent(activity, AdminHomeActivity.class);
+            }
+
+            if (intent != null) {
+                intent.putExtra("AuthenticatedUser", signInUser);
+                startActivity(intent);
+                activity.finish();
+            }
+
+            //Authentication failed
+        } else {
+            Toast.makeText(getContext(), outcome, Toast.LENGTH_LONG).show();
+
+            //Reset sign in outcome
+            signInSignUpViewModel.setSignInOutcome("");
+
+            //Re-enable sign up button
+            signInButton.setEnabled(true);
+        }
     }
 }

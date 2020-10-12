@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.model;
+package com.app_perso.tutorfinder_v2.util;
 
 import androidx.annotation.NonNull;
 

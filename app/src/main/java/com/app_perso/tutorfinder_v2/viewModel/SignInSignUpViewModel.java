@@ -7,9 +7,10 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.app_perso.tutorfinder_v2.model.Role;
-import com.app_perso.tutorfinder_v2.model.User;
-import com.app_perso.tutorfinder_v2.model.repository.AuthRepository;
+import com.app_perso.tutorfinder_v2.util.Role;
+import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.repository.AuthRepository;
+import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -28,6 +29,7 @@ public class SignInSignUpViewModel extends ViewModel {
 
     private MutableLiveData<User> userSignUpMutableLiveData;
     private MutableLiveData<User> userSignInMutableLiveData;
+    private User signedInUser;
     private AuthRepository authRepository;
 
     public SignInSignUpViewModel() {
@@ -48,6 +50,10 @@ public class SignInSignUpViewModel extends ViewModel {
             userSignInMutableLiveData = new MutableLiveData<>();
         }
         return userSignInMutableLiveData;
+    }
+
+    public User getSignedInUser() {
+        return signedInUser;
     }
 
     public MutableLiveData<String> getSignUpOutcome() {
@@ -118,7 +124,8 @@ public class SignInSignUpViewModel extends ViewModel {
     private OnSuccessListener signInSuccess = new OnSuccessListener() {
         @Override
         public void onSuccess(Object o) {
-            signInOutcome.setValue("Sign in successful.");
+            signedInUser = (User) o;
+            signInOutcome.setValue(SignInSignUpUtils.SIGNED_IN);
         }
     };
 
