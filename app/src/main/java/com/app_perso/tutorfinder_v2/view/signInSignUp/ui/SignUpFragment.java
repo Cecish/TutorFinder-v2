@@ -12,12 +12,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.databinding.FragmentSignUpBinding;
-import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
 import com.app_perso.tutorfinder_v2.viewModel.SignInSignUpViewModel;
 

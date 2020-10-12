@@ -62,14 +62,14 @@ public class ForgottenPasswordActivity extends AppCompatActivity {
                 resetButton.setEnabled(false);
 
                 if (TextUtils.isEmpty(emailAddress)) {
-                    binding.filledTextFieldEmail.setError("Enter an E-Mail Address");
+                    binding.filledTextFieldEmail.setError(getString(R.string.error_empty_email));
                     binding.filledTextFieldEmail.requestFocus();
 
                     //Re-enable sign up button
                     resetButton.setEnabled(true);
 
                 } else if (StringUtils.isNotValidEmail(emailAddress)) {
-                    binding.filledTextFieldEmail.setError("Enter a Valid E-mail Address");
+                    binding.filledTextFieldEmail.setError(getString(R.string.error_invalid_email));
                     binding.filledTextFieldEmail.requestFocus();
 
                     //Re-enable sign up button

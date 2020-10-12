@@ -64,28 +64,28 @@ public class SignInFragment extends Fragment  {
                 signInButton.setEnabled(false);
 
                 if (TextUtils.isEmpty(Objects.requireNonNull(signInUser).getEmail())) {
-                    binding.filledTextFieldEmail.setError("Enter an E-Mail Address");
+                    binding.filledTextFieldEmail.setError(getString(R.string.error_empty_email));
                     binding.filledTextFieldEmail.requestFocus();
 
                     //Re-enable sign up button
                     signInButton.setEnabled(true);
 
                 } else if (signInUser.isNotValidEmail()) {
-                    binding.filledTextFieldEmail.setError("Enter a Valid E-mail Address");
+                    binding.filledTextFieldEmail.setError(getString(R.string.error_invalid_email));
                     binding.filledTextFieldEmail.requestFocus();
 
                     //Re-enable sign up button
                     signInButton.setEnabled(true);
 
                 } else if (TextUtils.isEmpty(Objects.requireNonNull(signInUser).getPassword())) {
-                    binding.filledTextFieldPasswd.setError("Enter a Password");
+                    binding.filledTextFieldPasswd.setError(getString(R.string.error_empty_passwd));
                     binding.filledTextFieldPasswd.requestFocus();
 
                     //Re-enable sign up button
                     signInButton.setEnabled(true);
 
                 } else if (signInUser.isNotValidPassword()) {
-                    binding.filledTextFieldPasswd.setError("Enter at least 6 Digit password");
+                    binding.filledTextFieldPasswd.setError(getString(R.string.error_invalid_passwd));
                     binding.filledTextFieldPasswd.requestFocus();
 
                     //Re-enable sign up button
