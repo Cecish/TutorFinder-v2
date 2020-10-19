@@ -26,8 +26,7 @@
         <activity
             android:name=".view.signInSignUp.ui.SignInSignUpActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TempActivity"
             android:screenOrientation="portrait" />
