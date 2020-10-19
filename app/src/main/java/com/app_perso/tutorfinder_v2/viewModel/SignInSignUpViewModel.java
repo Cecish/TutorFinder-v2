@@ -100,6 +100,10 @@ public class SignInSignUpViewModel extends ViewModel {
         authRepository.signInUserFirebase(user, signInSuccess, signInFailure);
     }
 
+    public void signOut() {
+        authRepository.signOutFirebase();
+    }
+
     private Role genSelectedRole() {
         Role res = null;
 
