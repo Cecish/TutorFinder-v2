@@ -20,9 +20,8 @@ import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.databinding.FragmentSignInBinding;
 import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.view.AdminHomeActivity;
-import com.app_perso.tutorfinder_v2.view.StudentHomeActivity;
-import com.app_perso.tutorfinder_v2.view.TutorHomeActivity;
+import com.app_perso.tutorfinder_v2.view.user.admin.AdminHomeActivity;
+import com.app_perso.tutorfinder_v2.view.user.studentOrTutor.StudentTutorHomeActivity;
 import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
 import com.app_perso.tutorfinder_v2.view.forgottenPassword.ForgottenPasswordActivity;
 import com.app_perso.tutorfinder_v2.viewModel.SignInSignUpViewModel;
@@ -122,11 +121,8 @@ public class SignInFragment extends Fragment  {
         if (outcome.equals(SignInSignUpUtils.SIGNED_IN)) {
             Intent intent = null;
 
-            if (signInUser.getRole().equals(Role.STUDENT)) {
-                intent = new Intent(activity, StudentHomeActivity.class);
-
-            } else if (signInUser.getRole().equals(Role.TUTOR)) {
-                intent = new Intent(activity, TutorHomeActivity.class);
+            if ((signInUser.getRole().equals(Role.STUDENT)) || (signInUser.getRole().equals(Role.TUTOR))) {
+                intent = new Intent(activity, StudentTutorHomeActivity.class);
 
             } else if (signInUser.getRole().equals(Role.ADMIN)) {
                 intent = new Intent(activity, AdminHomeActivity.class);
