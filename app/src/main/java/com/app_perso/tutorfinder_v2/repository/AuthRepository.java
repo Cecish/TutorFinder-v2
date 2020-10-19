@@ -201,4 +201,8 @@ public class AuthRepository {
 
         return firebaseAuth;
     }
+
+    public void signOutFirebase() {
+        firebaseAuth.signOut();
+    }
 }

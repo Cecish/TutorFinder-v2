@@ -15,7 +15,8 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.AdminHomeActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:label="@string/admin_portal"/>
         <activity
             android:name=".view.TutorHomeActivity"
             android:screenOrientation="portrait" />
