@@ -30,6 +30,10 @@
     <!-- Admin -->
     <string name="admin_portal">Admin portal</string>
 
+    <!-- Student/Tutor -->
+    <string name="student_portal">Student portal</string>
+    <string name="tutor_portal">Tutor portal</string>
+
     <!-- Menu options -->
     <string name="log_out">Log out</string>
 

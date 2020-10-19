@@ -14,23 +14,17 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.AdminHomeActivity"
+            android:name=".view.user.admin.AdminHomeActivity"
             android:screenOrientation="portrait"
             android:label="@string/admin_portal"/>
         <activity
-            android:name=".view.TutorHomeActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".view.StudentHomeActivity"
+            android:name=".view.user.studentOrTutor.StudentTutorHomeActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.signInSignUp.ui.SignInSignUpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".TempActivity"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".view.splashScreen.SplashScreenActivity"
             android:screenOrientation="portrait"
