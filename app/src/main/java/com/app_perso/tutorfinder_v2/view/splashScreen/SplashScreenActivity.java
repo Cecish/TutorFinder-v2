@@ -6,16 +6,14 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.AnimationSplashScreenUtils;
-import com.app_perso.tutorfinder_v2.view.AdminHomeActivity;
-import com.app_perso.tutorfinder_v2.view.StudentHomeActivity;
-import com.app_perso.tutorfinder_v2.view.TutorHomeActivity;
+import com.app_perso.tutorfinder_v2.view.user.admin.AdminHomeActivity;
+import com.app_perso.tutorfinder_v2.view.user.studentOrTutor.StudentTutorHomeActivity;
 import com.app_perso.tutorfinder_v2.view.signInSignUp.ui.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.viewModel.SplashViewModel;
 
@@ -66,12 +64,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                     if (user == null) {
                         intent = new Intent(SplashScreenActivity.this, SignInSignUpActivity.class);
 
-                    } else if (user.getRole().equals(Role.STUDENT)) {
-                        intent = new Intent(SplashScreenActivity.this, StudentHomeActivity.class);
-                        intent.putExtra("AuthenticatedUser", user);
-
-                    } else if (user.getRole().equals(Role.TUTOR)) {
-                        intent = new Intent(SplashScreenActivity.this, TutorHomeActivity.class);
+                    } else if ((user.getRole().equals(Role.STUDENT)) || (user.getRole().equals(Role.TUTOR))) {
+                        intent = new Intent(SplashScreenActivity.this, StudentTutorHomeActivity.class);
                         intent.putExtra("AuthenticatedUser", user);
 
                     } else if (user.getRole().equals(Role.ADMIN)) {
