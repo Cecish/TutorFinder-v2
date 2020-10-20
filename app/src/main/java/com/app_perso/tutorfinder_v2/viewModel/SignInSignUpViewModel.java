@@ -152,7 +152,7 @@ public class SignInSignUpViewModel extends ViewModel {
             String failure = "Authentication failed.";
             // If sign in fails, display a message to the user.
             if (e instanceof InstantiationException) {
-                failure = "Sign in failed: you need to verify your email address";
+                failure = e.getMessage();
             }
 
             // If sign up fails, display a message to the user.

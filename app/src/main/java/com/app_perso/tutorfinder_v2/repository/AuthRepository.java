@@ -163,10 +163,18 @@ public class AuthRepository {
 
                     //User can sign in if email is verified or he/she is the admin
                     if (Objects.requireNonNull(firebaseUser).isEmailVerified() || signedInUser.getRole().equals(Role.ADMIN)) {
-                        successListener.onSuccess(signedInUser);
+                        //check if tutor has been accepted
+                        if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(Status.PENDING)){
+                            failureListener.onFailure(new InstantiationException("Your tutor registration request is still pending"));
+                        } else if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(Status.DECLINED)) {
+                            failureListener.onFailure(new InstantiationException("Your tutor registration request has been declined"));
+                        } else {
+                            successListener.onSuccess(signedInUser);
+                        }
+
                     } else {
                         Log.d(SignInSignUpUtils.TAG, "Email not verified!");
-                        failureListener.onFailure(new InstantiationException("Warning email has not been verified yet"));
+                        failureListener.onFailure(new InstantiationException("Sign in failed: you need to verify your email address"));
                     }
 
                 } catch (Exception e) {
