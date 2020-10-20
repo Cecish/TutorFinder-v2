@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_tutors_management"
+        android:icon="@drawable/ic_baseline_check_24"
+        android:title="@string/title_tutor_management" />
+
+    <item
+        android:id="@+id/navigation_subject_management"
+        android:icon="@drawable/ic_baseline_subject_24"
+        android:title="@string/title_subject_management" />
+
+</menu>

@@ -29,6 +29,8 @@
 
     <!-- Admin -->
     <string name="admin_portal">Admin portal</string>
+    <string name="title_tutor_management">Manage tutors</string>
+    <string name="title_subject_management">Manage subjects</string>
 
     <!-- Student/Tutor -->
     <string name="student_portal">Student portal</string>
