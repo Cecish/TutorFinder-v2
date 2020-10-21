@@ -2,8 +2,6 @@ package com.app_perso.tutorfinder_v2.repository.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
-import android.util.Patterns;
 
 import androidx.annotation.NonNull;
 
@@ -40,6 +38,15 @@ public class User implements Parcelable {
         id = user.getUid();
         email = user.getEmail();
         username = user.getDisplayName();
+    }
+
+    //Only used to retrieve a user from a Firestore document
+    public User(String id, String username, String email, Role role, Status status){
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.role = role;
+        this.status = status;
     }
 
     public  String getId() {

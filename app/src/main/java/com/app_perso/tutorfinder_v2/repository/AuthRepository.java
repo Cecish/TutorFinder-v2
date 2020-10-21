@@ -19,8 +19,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -212,5 +216,40 @@ public class AuthRepository {
 
     public void signOutFirebase() {
         firebaseAuth.signOut();
+    }
+
+    public void getAllPendingTutors(@NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
+        collectionReference
+                .whereEqualTo("status", Status.PENDING)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            List<User> users = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                users.add(castToUser(document.getData()));
+                            }
+                            successListener.onSuccess(users);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
+    private User castToUser(Map<String, Object> map) {
+        try {
+            return new User(
+                    Objects.requireNonNull(map.get("id")).toString(),
+                    Objects.requireNonNull(map.get("username")).toString(),
+                    Objects.requireNonNull(map.get("email")).toString(),
+                    Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
+                    Status.valueOf(Objects.requireNonNull(map.get("status")).toString())
+            );
+        } catch(Exception e) {
+            Log.d("ERROR", "Map Firebbase document data is incorrect");
+            throw e;
+        }
     }
 }
