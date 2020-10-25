@@ -20,6 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.util.AdminUtils;
 import com.app_perso.tutorfinder_v2.view.user.admin.adapter.PendingTutorAdapter;
 import com.app_perso.tutorfinder_v2.viewModel.TutorsManagementViewModel;
 
@@ -50,9 +51,9 @@ public class TutorsManagementFragment extends Fragment {
                         getViewLifecycleOwner(),
                         (Observer<List<User>>) pendingTutors -> {
                             if (pendingTutors.size() == 0) {
-                                configViewFlipper(viewFlipper, 0);
+                                AdminUtils.configViewFlipper(viewFlipper, 0);
                             } else {
-                                configViewFlipper(viewFlipper, 1);
+                                AdminUtils.configViewFlipper(viewFlipper, 1);
 
                                 displayRequestsInfo(pendingTutors, viewFlipper.getCurrentView().findViewById(R.id.nb_requests_tv),
                                 recyclerView = viewFlipper.getCurrentView().findViewById(R.id.registration_requests_rv));
@@ -89,15 +90,5 @@ public class TutorsManagementFragment extends Fragment {
 
     private void displayRequestsInfo(List<User> requests, TextView nbRequestsTv, RecyclerView requestsRv) {
         nbRequestsTv.setText(getString(R.string.registration_requests_nb, requests.size()));
-    }
-
-    private void configViewFlipper(ViewFlipper viewFlipper, int displayedChild) {
-        viewFlipper.setVisibility(View.INVISIBLE);
-        viewFlipper.setDisplayedChild(displayedChild);
-        viewFlipper.postDelayed(new Runnable() {
-            public void run() {
-                viewFlipper.setVisibility(View.VISIBLE);
-            }
-        }, 250);
     }
 }
