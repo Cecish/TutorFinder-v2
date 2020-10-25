@@ -5,8 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Subject implements Parcelable, Comparable<Subject> {
     private String id;
@@ -21,12 +21,29 @@ public class Subject implements Parcelable, Comparable<Subject> {
         this.name = name;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
+    public Map<String, Object> genSubjectForDb() {
+        Map<String, Object> subjectMap = new HashMap<>();
+        subjectMap.put("id", id);
+        subjectMap.put("name", name);
+
+        return subjectMap;
     }
 
     @NonNull
