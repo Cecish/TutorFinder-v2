@@ -86,6 +86,29 @@ public class DatabaseHelper {
                 });
     }
 
+    public void updateSubject(final Subject subject, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
+        collectionReferenceSubjects
+                .whereEqualTo("name", subject.getName())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+
+                            if (task.getResult().size() == 0) {
+                                //Add new subject
+                                upsertSubject(subject, successListener, failureListener);
+
+                            } else {
+                                successListener.onSuccess("Subject " + subject.getName() + " is already added");
+                            }
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
     public void getAllSubjects(@NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
         collectionReferenceSubjects
                 .get()
