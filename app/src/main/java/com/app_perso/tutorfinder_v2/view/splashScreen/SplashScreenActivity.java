@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.AnimationSplashScreenUtils;
-import com.app_perso.tutorfinder_v2.view.user.admin.AdminHomeActivity;
+import com.app_perso.tutorfinder_v2.view.user.admin.ui.AdminHomeActivity;
 import com.app_perso.tutorfinder_v2.view.user.studentOrTutor.StudentTutorHomeActivity;
 import com.app_perso.tutorfinder_v2.view.signInSignUp.ui.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.viewModel.SplashViewModel;
