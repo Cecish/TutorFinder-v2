@@ -54,7 +54,7 @@ public class AuthRepository {
                                                 createdUser.setRole(user.getRole());
 
                                                 if (user.getRole().equals(Role.TUTOR)) {
-                                                    createdUser.setStatus(Status.PENDING);
+                                                    createdUser.setStatus(Status.NOT_VERIFIED);
                                                 } else {
                                                     createdUser.setStatus(Status.NOT_APPLICABLE);
                                                 }
@@ -167,6 +167,11 @@ public class AuthRepository {
 
                     //User can sign in if email is verified or he/she is the admin
                     if (Objects.requireNonNull(firebaseUser).isEmailVerified() || signedInUser.getRole().equals(Role.ADMIN)) {
+                        if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(Status.NOT_VERIFIED)) {
+                            signedInUser.setStatus(Status.PENDING);
+                            collectionReference.document(signedInUser.getId()).update(signedInUser.genUserForDb());
+                        }
+
                         //check if tutor has been accepted
                         if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(Status.PENDING)){
                             failureListener.onFailure(new InstantiationException("Your tutor registration request is still pending"));
@@ -247,8 +252,9 @@ public class AuthRepository {
                     Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
                     Status.valueOf(Objects.requireNonNull(map.get("status")).toString())
             );
+
         } catch(Exception e) {
-            Log.d("ERROR", "Map Firebbase document data is incorrect");
+            Log.d("ERROR", "Map Firebase document data is incorrect");
             throw e;
         }
     }

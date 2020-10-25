@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.view.user.admin;
+package com.app_perso.tutorfinder_v2.view.user.admin.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,10 +13,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.view.user.admin.adapter.PendingTutorAdapter;
 import com.app_perso.tutorfinder_v2.viewModel.TutorsManagementViewModel;
 
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.List;
 public class TutorsManagementFragment extends Fragment {
 
     private TutorsManagementViewModel tutorsManagementViewModel;
+    private RecyclerView recyclerView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -37,21 +41,35 @@ public class TutorsManagementFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         final ViewFlipper viewFlipper = view.findViewById(R.id.view_flipper);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
 
         tutorsManagementViewModel.getAllPendingRequests();
         tutorsManagementViewModel.getPendingTutors().observe(
                         getViewLifecycleOwner(),
                         (Observer<List<User>>) pendingTutors -> {
-                            if (pendingTutors == null || pendingTutors.size() == 0) {
-                                viewFlipper.setDisplayedChild(0);
+                            if (pendingTutors.size() == 0) {
+                                configViewFlipper(viewFlipper, 0);
                             } else {
-                                viewFlipper.setDisplayedChild(1);
+                                configViewFlipper(viewFlipper, 1);
 
                                 displayRequestsInfo(pendingTutors, viewFlipper.getCurrentView().findViewById(R.id.nb_requests_tv),
-                                viewFlipper.getCurrentView().findViewById(R.id.registration_requests_rv));
+                                recyclerView = viewFlipper.getCurrentView().findViewById(R.id.registration_requests_rv));
+                                recyclerView.setLayoutManager(layoutManager);
+                                recyclerView.setAdapter(new PendingTutorAdapter(requireContext(), pendingTutors, tutorsManagementViewModel));
+
+                                if (recyclerView.getItemDecorationCount() == 0) {
+                                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                                            layoutManager.getOrientation());
+                                    recyclerView.addItemDecoration(dividerItemDecoration);
+                                }
                             }
                         }
         );
+
+        tutorsManagementViewModel.getRefresh().observe(getViewLifecycleOwner(),
+                (Observer<Boolean>) refresh -> {
+                    //TODO
+                });
 
         tutorsManagementViewModel.getOutcome().observe(getViewLifecycleOwner(), (Observer<String>) it -> {
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show();
@@ -60,5 +78,15 @@ public class TutorsManagementFragment extends Fragment {
 
     private void displayRequestsInfo(List<User> requests, TextView nbRequestsTv, RecyclerView requestsRv) {
         nbRequestsTv.setText(getString(R.string.registration_requests_nb, requests.size()));
+    }
+
+    private void configViewFlipper(ViewFlipper viewFlipper, int displayedChild) {
+        viewFlipper.setVisibility(View.INVISIBLE);
+        viewFlipper.setDisplayedChild(displayedChild);
+        viewFlipper.postDelayed(new Runnable() {
+            public void run() {
+                viewFlipper.setVisibility(View.VISIBLE);
+            }
+        }, 250);
     }
 }

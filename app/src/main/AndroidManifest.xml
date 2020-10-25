@@ -14,7 +14,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.user.admin.AdminHomeActivity"
+            android:name=".view.user.admin.ui.AdminHomeActivity"
             android:label="@string/admin_portal"
             android:screenOrientation="portrait" />
         <activity

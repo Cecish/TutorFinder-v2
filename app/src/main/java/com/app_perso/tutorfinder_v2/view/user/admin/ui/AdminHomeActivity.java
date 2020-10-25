@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.view.user.admin;
+package com.app_perso.tutorfinder_v2.view.user.admin.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;

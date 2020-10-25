@@ -20,7 +20,7 @@ import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.databinding.FragmentSignInBinding;
 import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.view.user.admin.AdminHomeActivity;
+import com.app_perso.tutorfinder_v2.view.user.admin.ui.AdminHomeActivity;
 import com.app_perso.tutorfinder_v2.view.user.studentOrTutor.StudentTutorHomeActivity;
 import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
 import com.app_perso.tutorfinder_v2.view.forgottenPassword.ForgottenPasswordActivity;

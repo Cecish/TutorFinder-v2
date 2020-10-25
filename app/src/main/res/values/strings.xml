@@ -38,6 +38,9 @@
     <!-- Student/Tutor -->
     <string name="student_portal">Student portal</string>
     <string name="tutor_portal">Tutor portal</string>
+    <string name="tutor_avatar">Tutor avatar</string>
+    <string name="approve">Approve</string>
+    <string name="decline">Decline</string>
 
     <!-- Menu options -->
     <string name="log_out">Log out</string>
