@@ -34,6 +34,8 @@
     <string name="no_registration_request">There are no tutor registration requests to review</string>
     <string name="registration_request_instructions">Only the not already reviewed tutor registration requests are listed here. Once reviewed, requests are no longer displayed below</string>
     <string name="registration_requests_nb">Registration requests to review: %1$d</string>
+    <string name="no_subjects_admin">There are no tutor subjects available in the Tutor Finder app yet. Add some!</string>
+
 
     <!-- Student/Tutor -->
     <string name="student_portal">Student portal</string>

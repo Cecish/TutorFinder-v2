@@ -1,5 +1,7 @@
 package com.app_perso.tutorfinder_v2.viewModel;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -43,6 +45,7 @@ public class TutorsManagementViewModel extends ViewModel {
     private OnSuccessListener pendingTutorsSuccess = new OnSuccessListener() {
         @Override
         public void onSuccess(Object o) {
+            refresh.setValue(false);
             pendingTutors.setValue((List<User>) o);
         }
     };
@@ -50,6 +53,7 @@ public class TutorsManagementViewModel extends ViewModel {
     private OnFailureListener pendingTutorsFailure = new OnFailureListener() {
         @Override
         public void onFailure(@NonNull Exception e) {
+            refresh.setValue(false);
             setOutcome("Oops. An error occurred.");
         }
     };
@@ -57,7 +61,7 @@ public class TutorsManagementViewModel extends ViewModel {
     private OnSuccessListener tutorSuccess = new OnSuccessListener() {
         @Override
         public void onSuccess(Object o) {
-            refresh.setValue(true);
+            Log.d("TUTOR FINDER DEBUG", "Tutor registration successfully handled");
         }
     };
 
@@ -83,5 +87,9 @@ public class TutorsManagementViewModel extends ViewModel {
 
     public MutableLiveData<Boolean> getRefresh() {
         return refresh;
+    }
+
+    public void setRefresh(boolean refresh) {
+        this.refresh.setValue(refresh);
     }
 }
