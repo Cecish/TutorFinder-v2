@@ -1,7 +1,6 @@
 package com.app_perso.tutorfinder_v2.view.user.admin.ui;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,8 +40,6 @@ public class TutorsManagementFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        Log.d("CECILE", "test");
 
         final ViewFlipper viewFlipper = view.findViewById(R.id.view_flipper);
         final SwipeRefreshLayout mSwipeRefreshLayout = view.findViewById(R.id.swipe_to_refresh);
