@@ -1,6 +1,7 @@
 package com.app_perso.tutorfinder_v2.view.user.admin.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.User;
@@ -40,7 +42,10 @@ public class TutorsManagementFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Log.d("CECILE", "test");
+
         final ViewFlipper viewFlipper = view.findViewById(R.id.view_flipper);
+        final SwipeRefreshLayout mSwipeRefreshLayout = view.findViewById(R.id.swipe_to_refresh);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
 
         tutorsManagementViewModel.getAllPendingRequests();
@@ -63,6 +68,8 @@ public class TutorsManagementFragment extends Fragment {
                                     recyclerView.addItemDecoration(dividerItemDecoration);
                                 }
                             }
+
+                            mSwipeRefreshLayout.setRefreshing(false);
                         }
         );
 
@@ -73,6 +80,13 @@ public class TutorsManagementFragment extends Fragment {
 
         tutorsManagementViewModel.getOutcome().observe(getViewLifecycleOwner(), (Observer<String>) it -> {
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show();
+        });
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                tutorsManagementViewModel.getAllPendingRequests();
+            }
         });
     }
 
