@@ -66,14 +66,12 @@ public class TutorsManagementFragment extends Fragment {
                                     recyclerView.addItemDecoration(dividerItemDecoration);
                                 }
                             }
-
-                            mSwipeRefreshLayout.setRefreshing(false);
                         }
         );
 
         tutorsManagementViewModel.getRefresh().observe(getViewLifecycleOwner(),
                 (Observer<Boolean>) refresh -> {
-                    //TODO
+                    mSwipeRefreshLayout.setRefreshing(refresh);
                 });
 
         tutorsManagementViewModel.getOutcome().observe(getViewLifecycleOwner(), (Observer<String>) it -> {
@@ -83,6 +81,7 @@ public class TutorsManagementFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                tutorsManagementViewModel.setRefresh(true);
                 tutorsManagementViewModel.getAllPendingRequests();
             }
         });
