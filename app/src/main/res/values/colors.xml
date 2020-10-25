@@ -7,4 +7,7 @@
     <color name="lighterBlue">#0189ff</color>
     <color name="darkerBlue">#0040e3</color>
     <color name="white">#FFFFFF</color>
+    <color name="red">#C70039</color>
+    <color name="darkRed">#900C3F</color>
+    <color name="lightRed">#FF5733</color>
 </resources>
