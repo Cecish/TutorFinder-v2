@@ -51,9 +51,9 @@ public class TutorsManagementFragment extends Fragment {
                         getViewLifecycleOwner(),
                         (Observer<List<User>>) pendingTutors -> {
                             if (pendingTutors.size() == 0) {
-                                AdminUtils.configViewFlipper(viewFlipper, 0);
+                                AdminUtils.configViewFlipper(viewFlipper, null, 0);
                             } else {
-                                AdminUtils.configViewFlipper(viewFlipper, 1);
+                                AdminUtils.configViewFlipper(viewFlipper, null, 1);
 
                                 displayRequestsInfo(pendingTutors, viewFlipper.getCurrentView().findViewById(R.id.nb_requests_tv),
                                 recyclerView = viewFlipper.getCurrentView().findViewById(R.id.registration_requests_rv));

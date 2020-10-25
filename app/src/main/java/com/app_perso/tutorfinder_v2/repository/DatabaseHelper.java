@@ -29,7 +29,7 @@ public class DatabaseHelper {
     private CollectionReference collectionReferenceSubjects = firebaseFirestore.collection(COLLECTION_SUBJECTS);
 
     //if the entity is present in the database update the record, else create new record
-    public void upsertUser(final User user, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener){
+    public void upsertUser(final User user, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
         DocumentReference uidRef;
 
         if (user.getId() == null) {
@@ -41,6 +41,49 @@ public class DatabaseHelper {
         uidRef.set(user.genUserForDb())
                 .addOnSuccessListener(successListener)
                 .addOnFailureListener(failureListener);
+    }
+
+    public void upsertSubject(final Subject subject, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
+        DocumentReference uidRef;
+
+        if (subject.getId() == null) {
+            uidRef = collectionReferenceSubjects.document();
+            subject.setId(uidRef.getId());
+        } else {
+            uidRef = collectionReferenceSubjects.document(subject.getId());
+        }
+
+        uidRef.set(subject.genSubjectForDb())
+                .addOnSuccessListener(new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        successListener.onSuccess(subject);
+                    }
+                })
+                .addOnFailureListener(failureListener);
+    }
+
+    public void addSubject(final String subjectName, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
+        collectionReferenceSubjects
+                .whereEqualTo("name", subjectName)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+
+                            if (task.getResult().size() == 0) {
+                                //Add new subject
+                                upsertSubject(new Subject(subjectName), successListener, failureListener);
+
+                            } else {
+                                successListener.onSuccess("Subject " + subjectName + " is already added");
+                            }
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
     }
 
     public void getAllSubjects(@NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
