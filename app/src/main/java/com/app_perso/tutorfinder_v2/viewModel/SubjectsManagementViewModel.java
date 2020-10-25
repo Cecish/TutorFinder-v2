@@ -32,6 +32,10 @@ public class SubjectsManagementViewModel extends ViewModel {
         databaseHelper.addSubject(StringUtils.toUpperCaseFirstLetter(subjectName), addSubjectSuccess, addSubjectFailure);
     }
 
+    public void updateSubject(Subject subject) {
+        databaseHelper.updateSubject(subject, updateSubjectSuccess, updateSubjectFailure);
+    }
+
     private OnSuccessListener subjectsSuccess = new OnSuccessListener() {
         @Override
         public void onSuccess(Object o) {
@@ -59,6 +63,24 @@ public class SubjectsManagementViewModel extends ViewModel {
     };
 
     private OnFailureListener addSubjectFailure = new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+            setOutcome("Oops. An error occurred.");
+        }
+    };
+
+    private OnSuccessListener updateSubjectSuccess = new OnSuccessListener() {
+        @Override
+        public void onSuccess(Object o) {
+            if (o instanceof Subject) {
+                getAllSubjects();
+            } else if (o instanceof String) {
+                setOutcome((String) o);
+            }
+        }
+    };
+
+    private OnFailureListener updateSubjectFailure = new OnFailureListener() {
         @Override
         public void onFailure(@NonNull Exception e) {
             setOutcome("Oops. An error occurred.");

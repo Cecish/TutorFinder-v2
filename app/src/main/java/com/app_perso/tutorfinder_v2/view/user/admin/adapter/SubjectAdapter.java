@@ -18,7 +18,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
     private LayoutInflater inflater;
     Context context;
     List<Subject> subjects;
-
+    private ItemClickListener mItemClickListener;
 
     public SubjectAdapter(Context context, List<Subject> subjects) {
         inflater = LayoutInflater.from(context);
@@ -38,10 +38,23 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
         super.onAttachedToRecyclerView(recyclerView);
     }
 
+    public void addItemClickListener(ItemClickListener listener) {
+        mItemClickListener = listener;
+    }
+
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         Subject current = subjects.get(i);
         viewHolder.subjectName.setText(current.getName());
+
+        viewHolder.subjectName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mItemClickListener != null) {
+                    mItemClickListener.onItemClick(i);
+                }
+            }
+        });
     }
 
     @Override
@@ -57,5 +70,10 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
 
             subjectName = (TextView) itemView.findViewById(R.id.subject_name);
         }
+    }
+
+    //Define your Interface method here
+    public interface ItemClickListener {
+        void onItemClick(int position);
     }
 }

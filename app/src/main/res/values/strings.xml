@@ -37,6 +37,8 @@
     <string name="no_subjects_admin">There are no tutor subjects available in the Tutor Finder app yet. Add some!</string>
     <string name="add_subject">Add a subject</string>
     <string name="add">Add</string>
+    <string name="edit_subject">Edit a subject</string>
+    <string name="edit">Edit</string>
 
     <!-- Student/Tutor -->
     <string name="student_portal">Student portal</string>
