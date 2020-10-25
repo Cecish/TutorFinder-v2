@@ -1,6 +1,7 @@
 package com.app_perso.tutorfinder_v2.view.user.admin.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class SubjectsManagementFragment extends Fragment {
+public class SubjectsManagementFragment extends Fragment implements SubjectAdapter.ItemClickListener {
 
     private SubjectsManagementViewModel subjectsManagementViewModel;
 
@@ -70,7 +71,9 @@ public class SubjectsManagementFragment extends Fragment {
                         });
 
                         recyclerView.setLayoutManager(layoutManager);
-                        recyclerView.setAdapter(new SubjectAdapter(requireContext(), subjects));
+                        SubjectAdapter subjectAdapter = new SubjectAdapter(requireContext(), subjects);
+                        subjectAdapter.addItemClickListener(this);
+                        recyclerView.setAdapter(subjectAdapter);
 
                         if (recyclerView.getItemDecorationCount() == 0) {
                             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -81,5 +84,10 @@ public class SubjectsManagementFragment extends Fragment {
                 }
         );
 
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Log.d("CECILE", subjectsManagementViewModel.subjects.getValue().get(position).getName());
     }
 }
