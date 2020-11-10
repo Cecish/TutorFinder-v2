@@ -1,7 +1,6 @@
 package com.app_perso.tutorfinder_v2.viewModel;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -18,7 +17,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class SplashViewModel extends AndroidViewModel {
     private SplashRepository splashRepository;
     private AuthRepository authRepository;
-    private LiveData<FirebaseUser> isUserAuthenticatedLiveData;
     private MutableLiveData<User> authenticatedUserLiveData;
 
     public SplashViewModel(Application application) {
@@ -28,12 +26,8 @@ public class SplashViewModel extends AndroidViewModel {
         authenticatedUserLiveData = new MutableLiveData<>();
     }
 
-    public LiveData<FirebaseUser> getIsUserAuthenticatedLiveData() {
-        return isUserAuthenticatedLiveData;
-    }
-
-    public void checkIfUserIsAuthenticated() {
-        isUserAuthenticatedLiveData = splashRepository.checkIfUserIsAuthenticatedInFirebase();
+    public FirebaseUser getUserAuthenticated() {
+        return splashRepository.getUserAuthenticatedInFirebase();
     }
 
     public MutableLiveData<User> getAuthenticatedUserLiveData() {
