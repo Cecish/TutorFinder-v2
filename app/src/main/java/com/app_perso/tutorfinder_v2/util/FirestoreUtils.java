@@ -8,6 +8,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class FirestoreUtils {
+    public static final int RESULT_LOAD_IMAGE = 10;
 
     public static void loadProfilePicture(ImageView iv, String userId, Context context) {
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();

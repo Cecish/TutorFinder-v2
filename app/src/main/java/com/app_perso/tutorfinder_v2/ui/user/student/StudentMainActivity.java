@@ -8,6 +8,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -64,18 +65,8 @@ public class StudentMainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setPortalName(Role role) {
-        switch (role) {
-            case STUDENT:
-                mActionBar.setTitle(R.string.student_portal);
-                break;
-
-            case TUTOR:
-                mActionBar.setTitle(R.string.tutor_portal);
-                break;
-
-            default:
-                throw new IllegalArgumentException("User with role " + role.toString() + " cannot access this portal!");
-        }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

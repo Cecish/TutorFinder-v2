@@ -9,16 +9,39 @@
     android:orientation="vertical"
     tools:context=".ui.user.student.ui.home.HomeFragment" >
 
-
-    <ImageView
-        android:id="@+id/profile_pic"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:paddingTop="24dp"
         android:paddingBottom="12dp"
-        android:background="@drawable/ic_baseline_account_circle_24"
-        android:layout_gravity="center_horizontal"
-        android:contentDescription="@string/profile_picture" />
+        android:gravity="center" >
+
+        <ImageView
+            android:id="@+id/profile_pic"
+            android:layout_width="@dimen/height_profile_pic"
+            android:layout_height="@dimen/height_profile_pic"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/ic_baseline_account_circle_24"
+            android:contentDescription="@string/profile_picture"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/edit_profile_pic"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@android:drawable/ic_menu_edit"
+            android:contentDescription="@string/edit_profile_picture"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profile_pic"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/username"
