@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.app_perso.tutorfinder_v2.R;
@@ -52,6 +53,14 @@ public class HomeFragment extends Fragment {
         //Populate profile info
         usernameTv.setText(user.getUsername());
         FirestoreUtils.loadProfilePicture(profilePic, user.getId(), getContext());
+
+        //Refresh profile pic when a new one is uploaded
+        homeViewModel.getRefreshProfilePic().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                FirestoreUtils.loadProfilePicture(profilePic, user.getId(), getContext());
+            }
+        });
 
         //Edit profile picture
         editProfilePic.setOnClickListener(new View.OnClickListener() {

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -16,8 +17,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 public class HomeViewModel extends ViewModel {
+    private MutableLiveData<Boolean> refreshProfilePic = new MutableLiveData<>(false);
 
     public HomeViewModel() { }
+
+    public MutableLiveData<Boolean> getRefreshProfilePic() {
+        return refreshProfilePic;
+    }
 
     /**
      * Uploading a file (in this project a profile picture previously picked from the phone's Photos or Gallery app)
@@ -38,6 +44,9 @@ public class HomeViewModel extends ViewModel {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
                             Toast.makeText(context, "Uploaded", Toast.LENGTH_SHORT).show();
+
+                            //Refresh profile picture
+                            refreshProfilePic.setValue(true);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
