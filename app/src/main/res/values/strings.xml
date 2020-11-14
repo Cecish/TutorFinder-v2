@@ -46,6 +46,8 @@
     <string name="tutor_avatar">Tutor avatar</string>
     <string name="approve">Approve</string>
     <string name="decline">Decline</string>
+    <string name="upcoming_sessions">Your upcoming sessions (up to 30):</string>
+    <string name="profile_picture">Profile picture</string>
 
     <!-- Menu options -->
     <string name="log_out">Log out</string>

@@ -25,13 +25,14 @@ import java.util.Objects;
 public class StudentMainActivity extends AppCompatActivity {
     private SignInSignUpViewModel signInSignUpViewModel;
     private ActionBar mActionBar;
+    public User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_home);
 
-        User user = Objects.requireNonNull(getIntent().getExtras()).getParcelable("AuthenticatedUser");
+        user = Objects.requireNonNull(getIntent().getExtras()).getParcelable("AuthenticatedUser");
         mActionBar = getSupportActionBar();
 
         BottomNavigationView navView = findViewById(R.id.navigation);
