@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.app_perso.tutorfinder_v2">
+    package="com.app_perso.tutorfinder_v2" >
 
     <application
         android:allowBackup="true"
@@ -8,26 +8,30 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_tutor_finder_v2_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".view.forgottenPassword.ForgottenPasswordActivity"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".ui.forgottenPassword.ForgottenPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.user.admin.ui.AdminHomeActivity"
+            android:name=".ui.user.admin.AdminHomeActivity"
             android:label="@string/admin_portal"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.user.studentOrTutor.StudentTutorHomeActivity"
+            android:name=".ui.user.student.StudentMainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.signInSignUp.ui.SignInSignUpActivity"
+            android:name=".ui.user.tutor.TutorMainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.signInSignUp.SignInSignUpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".view.splashScreen.SplashScreenActivity"
+            android:name=".ui.splashScreen.SplashScreenActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

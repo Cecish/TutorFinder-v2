@@ -5,8 +5,8 @@
     <data>
         <variable
             name="SignInSignUpViewModel"
-            type="com.app_perso.tutorfinder_v2.viewModel.SignInSignUpViewModel" />
-        <variable name="fragment" type="com.app_perso.tutorfinder_v2.view.signInSignUp.ui.SignInFragment" />
+            type="com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel" />
+        <variable name="fragment" type="com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInFragment" />
     </data>
 
     <LinearLayout
