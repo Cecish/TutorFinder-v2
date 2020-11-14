@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.ui.user.student.ui.home;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.home;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +21,8 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.ui.user.student.StudentMainActivity;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.StudentMainActivity;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.TutorMainActivity;
 import com.app_perso.tutorfinder_v2.util.FirestoreUtils;
 
 import java.io.FileNotFoundException;
@@ -48,7 +49,14 @@ public class HomeFragment extends Fragment {
         ImageView editProfilePic = (ImageView) view.findViewById(R.id.edit_profile_pic);
 
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        user = ((StudentMainActivity) Objects.requireNonNull(getActivity())).user;
+
+        if (getActivity() instanceof StudentMainActivity) {
+            user = ((StudentMainActivity) Objects.requireNonNull(getActivity())).user;
+        } else if (getActivity() instanceof TutorMainActivity) {
+            user = ((TutorMainActivity) Objects.requireNonNull(getActivity())).user;
+        } else {
+            throw new IllegalStateException("User not found");
+        }
 
         //Populate profile info
         usernameTv.setText(user.getUsername());

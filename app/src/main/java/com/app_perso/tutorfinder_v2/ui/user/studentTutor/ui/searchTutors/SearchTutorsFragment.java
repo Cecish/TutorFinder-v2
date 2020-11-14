@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.ui.user.student.ui.learningSubjects;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.searchTutors;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,17 +13,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.app_perso.tutorfinder_v2.R;
 
-public class LearningSubjectsFragment extends Fragment {
+public class SearchTutorsFragment extends Fragment {
 
-    private LearningSubjectsViewModel learningSubjectsViewModel;
+    private SearchTutorsViewModel searchTutorsViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
-        learningSubjectsViewModel =
-                ViewModelProviders.of(this).get(LearningSubjectsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_learning_needs, container, false);
-        final TextView textView = root.findViewById(R.id.text_dashboard);
-        learningSubjectsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        searchTutorsViewModel =
+                ViewModelProviders.of(this).get(SearchTutorsViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_search_tutors, container, false);
+        final TextView textView = root.findViewById(R.id.text_notifications);
+        searchTutorsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

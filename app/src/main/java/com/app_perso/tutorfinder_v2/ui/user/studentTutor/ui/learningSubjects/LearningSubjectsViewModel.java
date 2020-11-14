@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.ui.user.student.ui.learningSubjects;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.learningSubjects;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

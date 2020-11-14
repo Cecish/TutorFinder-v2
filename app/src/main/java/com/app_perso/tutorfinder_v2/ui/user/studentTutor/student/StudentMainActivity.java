@@ -1,6 +1,5 @@
-package com.app_perso.tutorfinder_v2.ui.user.student;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.student;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -8,7 +7,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,7 +14,6 @@ import android.view.MenuItem;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -25,7 +22,6 @@ import java.util.Objects;
 
 public class StudentMainActivity extends AppCompatActivity {
     private SignInSignUpViewModel signInSignUpViewModel;
-    private ActionBar mActionBar;
     public User user;
 
     @Override
@@ -34,7 +30,6 @@ public class StudentMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student_home);
 
         user = Objects.requireNonNull(getIntent().getExtras()).getParcelable("AuthenticatedUser");
-        mActionBar = getSupportActionBar();
 
         BottomNavigationView navView = findViewById(R.id.navigation);
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.

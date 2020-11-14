@@ -1,45 +1,46 @@
-package com.app_perso.tutorfinder_v2.ui.user.tutor;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
-import com.app_perso.tutorfinder_v2.ui.user.student.ui.chat.ChatFragment;
-import com.app_perso.tutorfinder_v2.ui.user.student.ui.home.HomeFragment;
-import com.app_perso.tutorfinder_v2.ui.user.student.ui.learningSubjects.LearningSubjectsFragment;
-import com.app_perso.tutorfinder_v2.ui.user.student.ui.searchTutors.SearchTutorsFragment;
-import com.app_perso.tutorfinder_v2.util.Role;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
 
 public class TutorMainActivity extends AppCompatActivity {
     private SignInSignUpViewModel signInSignUpViewModel;
-    private ActionBar mActionBar;
+    public User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutor_home);
 
-        User user = Objects.requireNonNull(getIntent().getExtras()).getParcelable("AuthenticatedUser");
-        mActionBar = getSupportActionBar();
+        user = Objects.requireNonNull(getIntent().getExtras()).getParcelable("AuthenticatedUser");
+
+        BottomNavigationView navView = findViewById(R.id.navigation);
+        // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_home,
+                R.id.navigation_learning_subjects, R.id.navigation_search, R.id.navigation_chat).build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navView, navController);
 
         signInSignUpViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(SignInSignUpViewModel.class);
-
-        setPortalName(Objects.requireNonNull(user).getRole());
     }
 
     @Override
@@ -59,18 +60,8 @@ public class TutorMainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setPortalName(Role role) {
-        switch (role) {
-            case STUDENT:
-                mActionBar.setTitle(R.string.student_portal);
-                break;
-
-            case TUTOR:
-                mActionBar.setTitle(R.string.tutor_portal);
-                break;
-
-            default:
-                throw new IllegalArgumentException("User with role " + role.toString() + " cannot access this portal!");
-        }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
