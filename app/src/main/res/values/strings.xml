@@ -49,5 +49,10 @@
 
     <!-- Menu options -->
     <string name="log_out">Log out</string>
+    <string name="title_activity_home">MainActivity</string>
+    <string name="home">Home</string>
+    <string name="learning_needs">Learning needs</string>
+    <string name="search_tutors">Search tutors</string>
+    <string name="conversations">Conversations</string>
 
 </resources>

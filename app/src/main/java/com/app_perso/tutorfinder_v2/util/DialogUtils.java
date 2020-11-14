@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
-import com.app_perso.tutorfinder_v2.viewModel.SubjectsManagementViewModel;
+import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
 
 public class DialogUtils {
 
