@@ -19,10 +19,10 @@
             android:label="@string/admin_portal"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.user.student.StudentMainActivity"
+            android:name=".ui.user.studentTutor.student.StudentMainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.user.tutor.TutorMainActivity"
+            android:name=".ui.user.studentTutor.tutor.TutorMainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.signInSignUp.SignInSignUpActivity"

@@ -10,11 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app_perso.tutorfinder_v2.R;
-import com.app_perso.tutorfinder_v2.ui.user.tutor.TutorMainActivity;
-import com.app_perso.tutorfinder_v2.util.Role;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.TutorMainActivity;
 import com.app_perso.tutorfinder_v2.util.AnimationSplashScreenUtils;
 import com.app_perso.tutorfinder_v2.ui.user.admin.AdminHomeActivity;
-import com.app_perso.tutorfinder_v2.ui.user.student.StudentMainActivity;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.StudentMainActivity;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
 import com.google.firebase.auth.FirebaseUser;
 

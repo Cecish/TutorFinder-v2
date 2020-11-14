@@ -14,8 +14,6 @@ public class FirestoreUtils {
     public static final int RESULT_LOAD_IMAGE = 10;
 
     public static void loadProfilePicture(ImageView iv, String userId, Context context) {
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-
         // Create a storage reference from our app
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profilePicRef = storageRef.child("images/" + userId + ".jpg");
