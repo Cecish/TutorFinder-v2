@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_learning_subjects"
-        android:name="com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.learningSubjects.LearningSubjectsFragment"
+        android:name="com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.mySubjects.LearningSubjectsFragment"
         android:label="@string/learning_needs"
         tools:layout="@layout/fragment_learning_needs" />
 

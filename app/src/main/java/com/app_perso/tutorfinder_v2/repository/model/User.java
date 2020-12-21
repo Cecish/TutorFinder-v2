@@ -10,7 +10,9 @@ import com.app_perso.tutorfinder_v2.util.Status;
 import com.app_perso.tutorfinder_v2.util.StringUtils;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class User implements Parcelable {
@@ -20,12 +22,14 @@ public class User implements Parcelable {
     private String password;
     private Role role;
     private Status status; // for tutors
+    private List<String> subjectIds;
 
     public User(String username, String email, String password, Role role) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.subjectIds = new ArrayList<>();
     }
 
     public User(String email, String password) {
@@ -41,12 +45,13 @@ public class User implements Parcelable {
     }
 
     //Only used to retrieve a user from a Firestore document
-    public User(String id, String username, String email, Role role, Status status){
+    public User(String id, String username, String email, Role role, Status status, List<String> subjectIds) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.role = role;
         this.status = status;
+        this.subjectIds = subjectIds;
     }
 
     public  String getId() {
@@ -71,6 +76,10 @@ public class User implements Parcelable {
 
     public Status getStatus() {
         return this.status;
+    }
+
+    public List<String> getSubjectIds() {
+        return this.subjectIds;
     }
 
     public void setUsername(String username) {
@@ -108,6 +117,7 @@ public class User implements Parcelable {
         userMap.put("email", email);
         userMap.put("role", role);
         userMap.put("status", status);
+        userMap.put("subjects",subjectIds);
 
         return userMap;
     }
@@ -121,13 +131,14 @@ public class User implements Parcelable {
                 ", password='" + password + '\'' +
                 ", role=" + role +
                 ", status=" + status + '\'' +
+                ", subjects=" + subjectIds + '\'' +
                 '}';
     }
 
 
     // Parcelling part
     public User(Parcel in){
-        String[] data = new String[6];
+        String[] data = new String[7];
 
         in.readStringArray(data);
         // the order needs to be the same as in writeToParcel() method
@@ -137,6 +148,7 @@ public class User implements Parcelable {
         this.password = data[3];
         this.role = Role.valueOf(data[4]);
         this.status = Status.valueOf(data[5]);
+        this.subjectIds = StringUtils.stringToList(data[6]);
     }
 
     @Override
@@ -146,13 +158,20 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        String subjects = "";
+
+        if (subjectIds != null) {
+            subjects = StringUtils.listToString(subjectIds);
+        }
+
         dest.writeStringArray(new String[] {
                 this.id,
                 this.username,
                 this.email,
                 this.password,
                 this.role.name(),
-                this.status.name()
+                this.status.name(),
+                subjects
         });
     }
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

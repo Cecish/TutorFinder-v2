@@ -49,6 +49,8 @@
     <string name="upcoming_sessions">Your upcoming sessions (up to 30):</string>
     <string name="profile_picture">Profile picture</string>
     <string name="edit_profile_picture">Edit profile picture</string>
+    <string name="my_learning_needs">My learning needs: </string>
+    <string name="my_teaching_subjects">The subjects I teach: </string>
 
     <!-- Menu options -->
     <string name="log_out">Log out</string>
@@ -57,5 +59,6 @@
     <string name="learning_needs">Learning needs</string>
     <string name="search_tutors">Search tutors</string>
     <string name="conversations">Conversations</string>
+    <string name="add_subjects_instructions">You have not selected any subjects yet. To do so, activate the edit mode in the top right corner of the screen</string>
 
 </resources>
