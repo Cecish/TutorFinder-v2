@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
+import com.app_perso.tutorfinder_v2.util.ArrayUtils;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
     Context context;
     List<Subject> subjects;
     List<String> userSubjects;
+    List<String> tempSubjectIds;
     boolean isDisableState;
     private ItemClickListener mItemClickListener;
 
@@ -30,6 +32,7 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
         this.userSubjects = userSubjects;
         this.context = context;
         this.isDisableState = isDisableState;
+        tempSubjectIds = ArrayUtils.copyOf(userSubjects);
     }
 
     @NonNull
@@ -53,7 +56,7 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
         Subject current = subjects.get(i);
         viewHolder.subjectName.setText(current.getName());
 
-        viewHolder.subjectCheckBox.setChecked(userSubjects.contains(current.getId()));
+        viewHolder.subjectCheckBox.setChecked(tempSubjectIds.contains(current.getId()));
 
         viewHolder.subjectName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +66,8 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
                     mItemClickListener.onItemClick(subjects.get(i), checkboxState);
                     viewHolder.subjectCheckBox.setChecked(checkboxState);
                     viewHolder.subjectCheckBox.setSelected(checkboxState);
+
+                    addRemoveTempSubjectSelection(checkboxState, current.getId());
                 }
             }
         });
@@ -79,8 +84,10 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
         viewHolder.subjectCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean checkboxState = viewHolder.subjectCheckBox.isChecked();
                 if (mItemClickListener != null) {
-                    mItemClickListener.onItemClick(subjects.get(i), viewHolder.subjectCheckBox.isChecked());
+                    mItemClickListener.onItemClick(subjects.get(i), checkboxState);
+                    addRemoveTempSubjectSelection(checkboxState, current.getId());
                 }
             }
         });
@@ -111,6 +118,14 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
     @Override
     public int getItemViewType(int position) {
         return position;
+    }
+
+    private void addRemoveTempSubjectSelection(boolean isChecked, String subjectId) {
+        if (isChecked) {
+            tempSubjectIds.add(subjectId);
+        } else {
+            tempSubjectIds.remove(subjectId);
+        }
     }
 
     //Define your Interface method here
