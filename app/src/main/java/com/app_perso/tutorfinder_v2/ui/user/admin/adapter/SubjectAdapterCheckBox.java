@@ -19,10 +19,10 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
     private LayoutInflater inflater;
     Context context;
     List<Subject> subjects;
-    List<Subject> userSubjects;
+    List<String> userSubjects;
     private ItemClickListener mItemClickListener;
 
-    public SubjectAdapterCheckBox(Context context, List<Subject> subjects, List<Subject> userSubjects) {
+    public SubjectAdapterCheckBox(Context context, List<Subject> subjects, List<String> userSubjects) {
         inflater = LayoutInflater.from(context);
         this.subjects = subjects;
         this.userSubjects = userSubjects;
@@ -49,6 +49,8 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         Subject current = subjects.get(i);
         viewHolder.subjectName.setText(current.getName());
+
+        viewHolder.subjectCheckBox.setChecked(userSubjects.contains(current.getId()));
 
         viewHolder.subjectName.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -147,7 +147,7 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
                         });
 
                         recyclerView.setLayoutManager(layoutManager);
-                        SubjectAdapterCheckBox subjectAdapter = new SubjectAdapterCheckBox(requireContext(), subjects, new ArrayList<>());
+                        SubjectAdapterCheckBox subjectAdapter = new SubjectAdapterCheckBox(requireContext(), subjects, userSubjectIds);
                         subjectAdapter.addItemClickListener(this);
                         recyclerView.setAdapter(subjectAdapter);
 
