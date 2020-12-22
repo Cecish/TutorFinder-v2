@@ -51,6 +51,7 @@
     <string name="edit_profile_picture">Edit profile picture</string>
     <string name="my_learning_needs">My learning needs: </string>
     <string name="my_teaching_subjects">The subjects I teach: </string>
+    <string name="save_subjects_selection">Save your subjects selection</string>
 
     <!-- Menu options -->
     <string name="log_out">Log out</string>
@@ -61,4 +62,6 @@
     <string name="conversations">Conversations</string>
     <string name="add_subjects_instructions">You have not selected any subjects yet. To do so, activate the edit mode in the top right corner of the screen</string>
 
+    <!-- Error -->
+    <string name="error_no_subjects">Oops, an error occurred. Try again later</string>
 </resources>

@@ -82,6 +82,10 @@ public class User implements Parcelable {
         return this.subjectIds;
     }
 
+    public void setSubjectIds(List<String> subjectIds) {
+        this.subjectIds = subjectIds;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }

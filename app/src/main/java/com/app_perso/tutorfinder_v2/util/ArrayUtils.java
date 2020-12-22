@@ -1,6 +1,7 @@
 package com.app_perso.tutorfinder_v2.util;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArrayUtils {
@@ -15,6 +16,18 @@ public class ArrayUtils {
                     break;
                 }
             }
+        }
+
+        return res;
+    }
+
+    public static List<String> copyOf(List<String> list) {
+        List<String> res = new ArrayList<>();
+
+        list.remove("");
+
+        for (String item: list) {
+            res.add(item);
         }
 
         return res;

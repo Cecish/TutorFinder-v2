@@ -50,30 +50,45 @@
             android:layout_gravity="center"
             app:drawableBottomCompat="@drawable/ensemble_vide" />
 
-        <LinearLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/subject_rv"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:scrollbarStyle="outsideOverlay" />
+                android:orientation="horizontal">
 
-            <com.alphabetik.Alphabetik
-                android:id="@+id/subject_sectionindex"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/subject_rv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scrollbarStyle="outsideOverlay" />
+
+                <com.alphabetik.Alphabetik
+                    android:id="@+id/subject_sectionindex"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="8dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    app:fontSize="14sp"
+                    app:itemsColor="@color/design_default_color_primary" />
+
+            </LinearLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabSave"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                app:fontSize="14sp"
-                app:itemsColor="@color/design_default_color_primary" />
-
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:src="@drawable/ic_baseline_save_24"
+                android:contentDescription="@string/save_subjects_selection"
+                android:layout_margin="16dp"
+                android:visibility="gone" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </ViewFlipper>
 
