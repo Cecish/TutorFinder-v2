@@ -19,7 +19,6 @@ public class SubjectsManagementViewModel extends ViewModel {
     public MutableLiveData<List<Subject>> subjects = new MutableLiveData<>();
     public MutableLiveData<String> outcome = new MutableLiveData<>();
 
-
     public SubjectsManagementViewModel() {
         databaseHelper = new DatabaseHelper();
     }

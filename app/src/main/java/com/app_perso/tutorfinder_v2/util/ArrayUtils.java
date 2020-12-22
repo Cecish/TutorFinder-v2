@@ -32,4 +32,16 @@ public class ArrayUtils {
 
         return res;
     }
+
+    public static List<String> intersectionListStr(List<String> list1, List<String> list2) {
+        List<String> list = new ArrayList<>();
+
+        for (String t : list1) {
+            if(list2.contains(t)) {
+                list.add(t);
+            }
+        }
+
+        return list;
+    }
 }

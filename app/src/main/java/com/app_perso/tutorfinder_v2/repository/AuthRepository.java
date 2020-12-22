@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.app_perso.tutorfinder_v2.util.ArrayUtils;
 import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.Status;
 import com.app_perso.tutorfinder_v2.repository.model.User;
@@ -273,7 +274,7 @@ public class AuthRepository {
                         Objects.requireNonNull(map.get("email")).toString(),
                         Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
                         Status.valueOf(Objects.requireNonNull(map.get("status")).toString()),
-                        StringUtils.stringToList((String) Objects.requireNonNull(map.get("subjects")))
+                        (List<String>) Objects.requireNonNull(map.get("subjects"))
                 );
             }
 
@@ -283,5 +284,29 @@ public class AuthRepository {
             Log.d("ERROR", "Map Firebase document data is incorrect");
             throw e;
         }
+    }
+
+    public void getTutorsMatchingSubjects(List<String> subjectIds, @NonNull final OnSuccessListener successListener,
+                                          @NonNull final OnFailureListener failureListener) {
+        collectionReference
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            List<User> tutors = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                User user = castToUser(document.getData());
+                                if (user.getRole() == Role.TUTOR && !ArrayUtils.isNullOrEmpty(user.getSubjectIds()) &&
+                                        ArrayUtils.intersectionListStr(subjectIds, user.getSubjectIds()).size() > 0) {
+                                    tutors.add(castToUser(document.getData()));
+                                }
+                            }
+                            successListener.onSuccess(tutors);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
     }
 }
