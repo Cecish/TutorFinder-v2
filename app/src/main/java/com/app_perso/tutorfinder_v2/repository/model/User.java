@@ -121,7 +121,7 @@ public class User implements Parcelable {
         userMap.put("email", email);
         userMap.put("role", role);
         userMap.put("status", status);
-        userMap.put("subjects",subjectIds);
+        userMap.put("subjects", subjectIds);
 
         return userMap;
     }

@@ -15,9 +15,18 @@ import com.google.android.gms.tasks.OnSuccessListener;
 public class LearningSubjectsViewModel extends ViewModel {
     private MutableLiveData<Integer> viewFlipperPos = new MutableLiveData<>();
     private DatabaseHelper databaseHelper;
+    private boolean isDisableState = true;
 
     public LearningSubjectsViewModel() {
         databaseHelper = new DatabaseHelper();
+    }
+
+    public boolean getIsDisableState() {
+        return isDisableState;
+    }
+
+    public void setIsDisableState(boolean isDisanleState) {
+        this.isDisableState = isDisanleState;
     }
 
     public void updateViewFlipperPos(boolean noSubjects) {

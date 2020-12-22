@@ -1,6 +1,5 @@
 package com.app_perso.tutorfinder_v2.ui.signInSignUp;
 
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;

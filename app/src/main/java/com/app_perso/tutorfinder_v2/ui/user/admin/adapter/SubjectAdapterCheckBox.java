@@ -20,13 +20,16 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
     Context context;
     List<Subject> subjects;
     List<String> userSubjects;
+    boolean isDisableState;
     private ItemClickListener mItemClickListener;
 
-    public SubjectAdapterCheckBox(Context context, List<Subject> subjects, List<String> userSubjects) {
+    public SubjectAdapterCheckBox(Context context, List<Subject> subjects, List<String> userSubjects,
+                                  boolean isDisableState) {
         inflater = LayoutInflater.from(context);
         this.subjects = subjects;
         this.userSubjects = userSubjects;
         this.context = context;
+        this.isDisableState = isDisableState;
     }
 
     @NonNull
@@ -63,6 +66,15 @@ public class SubjectAdapterCheckBox extends RecyclerView.Adapter<SubjectAdapterC
                 }
             }
         });
+
+        //RecyclerView's itrem are not clickable if user has not entered the edit mode
+        if (isDisableState) {
+            viewHolder.subjectName.setEnabled(false);
+            viewHolder.subjectCheckBox.setEnabled(false);
+        } else {
+            viewHolder.subjectName.setEnabled(true);
+            viewHolder.subjectCheckBox.setEnabled(true);
+        }
 
         viewHolder.subjectCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override

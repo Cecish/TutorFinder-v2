@@ -164,6 +164,7 @@ public class AuthRepository {
                     signedInUser.setUsername((String) userInfoInDb.get("username"));
                     signedInUser.setRole(Role.valueOf((String) userInfoInDb.get("role")));
                     signedInUser.setStatus(Status.valueOf((String) userInfoInDb.get("status")));
+                    signedInUser.setSubjectIds((List<String>) userInfoInDb.get("subjects"));
 
                     //User can sign in if email is verified or he/she is the admin
                     if (Objects.requireNonNull(firebaseUser).isEmailVerified() || signedInUser.getRole().equals(Role.ADMIN)) {

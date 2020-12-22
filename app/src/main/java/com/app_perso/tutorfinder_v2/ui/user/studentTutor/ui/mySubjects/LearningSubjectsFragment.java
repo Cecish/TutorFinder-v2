@@ -33,7 +33,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -78,6 +77,7 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
         //Render the user's subjects (learning needs for subjects vs tutoring subjects for tutors) if any
         userSubjectIds = user.getSubjectIds();
         newUserSubjectIds = ArrayUtils.copyOf(userSubjectIds);
+        userSubjectIds.remove("");
         hasSubjects = ArrayUtils.isNullOrEmpty(userSubjectIds);
         learningSubjectsViewModel.updateViewFlipperPos(hasSubjects);
         learningSubjectsViewModel.getViewFlipperPos().observe(
@@ -86,7 +86,7 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
                     viewFlipper.setDisplayedChild(pos);
 
                     if (pos == 1) {
-                        renderSubjects(userSubjectIds, alphabetik, subjectsRv);
+                        renderSubjects(userSubjectIds, alphabetik, subjectsRv, learningSubjectsViewModel.getIsDisableState());
                     }
                 }
         );
@@ -96,13 +96,11 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (viewFlipper.getDisplayedChild() == 0) {
-                        learningSubjectsViewModel.updateViewFlipperPos(false);
-                    }
+                    learningSubjectsViewModel.setIsDisableState(false);
+                    learningSubjectsViewModel.updateViewFlipperPos(false);
                 } else {
-                    if (ArrayUtils.isNullOrEmpty(user.getSubjectIds())) {
-                        learningSubjectsViewModel.updateViewFlipperPos(true);
-                    }
+                    learningSubjectsViewModel.setIsDisableState(true);
+                    learningSubjectsViewModel.updateViewFlipperPos(ArrayUtils.isNullOrEmpty(user.getSubjectIds()));
                 }
             }
         });
@@ -112,6 +110,7 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
             @Override
             public void onClick(View view) {
                 user.setSubjectIds(newUserSubjectIds);
+                userSubjectIds = ArrayUtils.copyOf(newUserSubjectIds);
                 learningSubjectsViewModel.updateUserinRemoteDb(user);
             }
         });
@@ -121,7 +120,8 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
      * Render the current user's list of subjects (learning needs for a student, tutoring subjects for a tutor)
      * @param userSubjectIds subject ids of the current logged-in user
      */
-    private void renderSubjects(List<String> userSubjectIds, Alphabetik alphabetik, RecyclerView recyclerView) {
+    private void renderSubjects(List<String> userSubjectIds, Alphabetik alphabetik, RecyclerView recyclerView,
+                                boolean isDisableState) {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
 
         //Alphabetically ordered list of learning needs (student) or tutoring subjects (tutors)
@@ -147,7 +147,8 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
                         });
 
                         recyclerView.setLayoutManager(layoutManager);
-                        SubjectAdapterCheckBox subjectAdapter = new SubjectAdapterCheckBox(requireContext(), subjects, userSubjectIds);
+                        SubjectAdapterCheckBox subjectAdapter = new SubjectAdapterCheckBox(requireContext(),
+                                subjects, userSubjectIds, isDisableState);
                         subjectAdapter.addItemClickListener(this);
                         recyclerView.setAdapter(subjectAdapter);
 
