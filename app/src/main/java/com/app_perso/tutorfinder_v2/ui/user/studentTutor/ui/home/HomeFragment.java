@@ -27,7 +27,6 @@ import com.app_perso.tutorfinder_v2.util.FirestoreUtils;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 import static com.app_perso.tutorfinder_v2.util.FirestoreUtils.RESULT_LOAD_IMAGE;
@@ -51,9 +50,9 @@ public class HomeFragment extends Fragment {
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
 
         if (getActivity() instanceof StudentMainActivity) {
-            user = ((StudentMainActivity) Objects.requireNonNull(getActivity())).user;
+            user = ((StudentMainActivity) requireActivity()).user;
         } else if (getActivity() instanceof TutorMainActivity) {
-            user = ((TutorMainActivity) Objects.requireNonNull(getActivity())).user;
+            user = ((TutorMainActivity) requireActivity()).user;
         } else {
             throw new IllegalStateException("User not found");
         }
@@ -92,7 +91,7 @@ public class HomeFragment extends Fragment {
                 && data != null && data.getData() != null ) {
             try {
                 final Uri imageUri = data.getData();
-                final InputStream imageStream = Objects.requireNonNull(getContext()).getContentResolver().openInputStream(imageUri);
+                final InputStream imageStream = requireContext().getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                 profilePic.setImageBitmap(selectedImage);
 

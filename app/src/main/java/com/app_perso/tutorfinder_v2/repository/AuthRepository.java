@@ -57,6 +57,7 @@ public class AuthRepository {
                                                     createdUser.setStatus(Status.NOT_VERIFIED);
                                                 } else {
                                                     createdUser.setStatus(Status.NOT_APPLICABLE);
+                                                    createdUser.setSubjectIds(new ArrayList<>());
                                                 }
 
                                                 initCurrentUser(createdUser, new OnSuccessListener() {
@@ -164,7 +165,15 @@ public class AuthRepository {
                     signedInUser.setUsername((String) userInfoInDb.get("username"));
                     signedInUser.setRole(Role.valueOf((String) userInfoInDb.get("role")));
                     signedInUser.setStatus(Status.valueOf((String) userInfoInDb.get("status")));
-                    signedInUser.setSubjectIds((List<String>) userInfoInDb.get("subjects"));
+
+                    if (userInfoInDb.get("subjects") == null || (userInfoInDb.get("subjects") != null &&
+                            Objects.requireNonNull(userInfoInDb.get("subjects")).toString().equals("[]"))) {
+                        List<String> emptyList = new ArrayList<>();
+                        emptyList.add("");
+                        signedInUser.setSubjectIds(emptyList);
+                    } else {
+                        signedInUser.setSubjectIds((ArrayList<String>) userInfoInDb.get("subjects"));
+                    }
 
                     //User can sign in if email is verified or he/she is the admin
                     if (Objects.requireNonNull(firebaseUser).isEmailVerified() || signedInUser.getRole().equals(Role.ADMIN)) {

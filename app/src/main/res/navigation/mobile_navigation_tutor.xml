@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation_student"
+    android:id="@+id/mobile_navigation_tutor"
     app:startDestination="@+id/navigation_home">
 
     <fragment
@@ -16,12 +16,6 @@
         android:name="com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.mySubjects.LearningSubjectsFragment"
         android:label="@string/learning_needs"
         tools:layout="@layout/fragment_learning_needs" />
-
-    <fragment
-        android:id="@+id/navigation_search"
-        android:name="com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.searchTutors.SearchTutorsFragment"
-        android:label="@string/search_tutors"
-        tools:layout="@layout/fragment_search_tutors" />
 
     <fragment
         android:id="@+id/navigation_chat"
