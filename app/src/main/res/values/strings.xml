@@ -57,6 +57,7 @@
     <string name="or">OR</string>
     <string name="matched_tutors">Matched tutors</string>
     <string name="instructions_matched_tutors">Click on a tutor in the list below to see further details</string>
+    <string name="matched_subjects">Matched subjects:</string>
 
     <!-- Menu options -->
     <string name="log_out">Log out</string>

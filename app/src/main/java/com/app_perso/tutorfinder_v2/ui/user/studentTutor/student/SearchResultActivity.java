@@ -3,10 +3,12 @@ package com.app_perso.tutorfinder_v2.ui.user.studentTutor.student;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -14,19 +16,26 @@ import android.widget.Toast;
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
+import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.adapter.MatchingTutorsAdapter;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.searchTutors.SearchTutorsViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
-public class SearchResultActivity extends AppCompatActivity {
+public class SearchResultActivity extends AppCompatActivity implements MatchingTutorsAdapter.ItemClickListener {
     private SearchTutorsViewModel searchTutorsViewModel;
     private SignInSignUpViewModel signInSignUpViewModel;
+    private SubjectsManagementViewModel subjectsManagementViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
+
+        RecyclerView matchingTutorsRv = (RecyclerView) findViewById(R.id.matched_tutors_rv);
 
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
@@ -38,6 +47,8 @@ public class SearchResultActivity extends AppCompatActivity {
                 ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(SearchTutorsViewModel.class);
         signInSignUpViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(SignInSignUpViewModel.class);
+        subjectsManagementViewModel = new ViewModelProvider(this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(SubjectsManagementViewModel.class);
 
         Intent intent = getIntent();
         Bundle args = intent.getBundleExtra("BUNDLE");
@@ -53,7 +64,27 @@ public class SearchResultActivity extends AppCompatActivity {
         });
 
         searchTutorsViewModel.getMatchingTutors().observe(this, matchingTutors -> {
-            Log.d("CECILE", matchingTutors.toString());
+            final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+
+            //sort tutors list (by alphabetical order)
+            Collections.sort(matchingTutors);
+
+            //TODO no results found
+
+            subjectsManagementViewModel.getSubjects(userSubjectIds);
+            subjectsManagementViewModel.getSubjectsSelection().observe(this, subjectsSelection -> {
+                Collections.sort(subjectsSelection);
+                matchingTutorsRv.setLayoutManager(layoutManager);
+                MatchingTutorsAdapter matchingTutorsAdapter = new MatchingTutorsAdapter(this, matchingTutors, subjectsSelection);
+                matchingTutorsAdapter.addItemClickListener(this);
+                matchingTutorsRv.setAdapter(matchingTutorsAdapter);
+
+                if (matchingTutorsRv.getItemDecorationCount() == 0) {
+                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(matchingTutorsRv.getContext(),
+                            layoutManager.getOrientation());
+                    matchingTutorsRv.addItemDecoration(dividerItemDecoration);
+                }
+            });
         });
 
     }
@@ -81,5 +112,10 @@ public class SearchResultActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        //TODO in FR-S10
     }
 }

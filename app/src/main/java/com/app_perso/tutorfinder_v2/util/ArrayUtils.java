@@ -44,4 +44,18 @@ public class ArrayUtils {
 
         return list;
     }
+
+    public static String listToString(List<String> list) {
+        StringBuilder res = new StringBuilder();
+
+        for (String item: list) {
+            res.append(item).append(", ");
+        }
+
+        if (list.size() > 0) {
+            res = new StringBuilder(res.substring(0, res.length() - 2));
+        }
+
+        return res.toString();
+    }
 }

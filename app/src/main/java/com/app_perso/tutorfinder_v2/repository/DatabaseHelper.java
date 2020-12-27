@@ -128,6 +128,27 @@ public class DatabaseHelper {
                 });
     }
 
+    public void getSubjectsById(List<String> subjectIds, @NonNull final OnSuccessListener successListener,
+                                    @NonNull final OnFailureListener failureListener) {
+        collectionReferenceSubjects
+                .whereIn("id", subjectIds)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            List<Subject> subjects = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                subjects.add(castToSubject(document.getData()));
+                            }
+                            successListener.onSuccess(subjects);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
     private Subject castToSubject(Map<String, Object> map) {
         try {
             return new Subject(
