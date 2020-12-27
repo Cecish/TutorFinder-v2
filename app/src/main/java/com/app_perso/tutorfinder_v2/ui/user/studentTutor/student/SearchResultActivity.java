@@ -19,7 +19,7 @@ import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.adapter.MatchingTutorsAdapter;
-import com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.searchTutors.SearchTutorsViewModel;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.searchTutors.SearchTutorsViewModel;
 import com.app_perso.tutorfinder_v2.util.ArrayUtils;
 
 import java.util.ArrayList;

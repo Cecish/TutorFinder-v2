@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.searchTutors;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.searchTutors;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
