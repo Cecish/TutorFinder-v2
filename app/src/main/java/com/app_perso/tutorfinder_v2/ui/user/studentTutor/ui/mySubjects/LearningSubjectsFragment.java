@@ -1,6 +1,7 @@
 package com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.mySubjects;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,6 +113,9 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
                 user.setSubjectIds(newUserSubjectIds);
                 userSubjectIds = ArrayUtils.copyOf(newUserSubjectIds);
                 learningSubjectsViewModel.updateUserinRemoteDb(user);
+
+                //Handle save fab visibility
+                setSaveFabVisibility();
             }
         });
     }
@@ -171,6 +175,10 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
         }
 
         //Handle save fab visibility
+        setSaveFabVisibility();
+    }
+
+    private void setSaveFabVisibility() {
         if (!userSubjectIds.equals(newUserSubjectIds)) {
             saveFab.setVisibility(View.VISIBLE);
         } else {

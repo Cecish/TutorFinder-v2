@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_learning_subjects"
         android:icon="@drawable/ic_baseline_menu_book_24"
-        android:title="@string/learning_needs" />
+        android:title="@string/taught_subjects" />
 
     <item
         android:id="@+id/navigation_chat"
