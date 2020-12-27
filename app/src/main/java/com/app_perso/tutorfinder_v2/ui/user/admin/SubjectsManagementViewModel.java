@@ -17,8 +17,8 @@ import java.util.List;
 public class SubjectsManagementViewModel extends ViewModel {
     private DatabaseHelper databaseHelper;
     public MutableLiveData<List<Subject>> subjects = new MutableLiveData<>();
+    private MutableLiveData<List<Subject>> subjectsSelection = new MutableLiveData<>();
     public MutableLiveData<String> outcome = new MutableLiveData<>();
-
 
     public SubjectsManagementViewModel() {
         databaseHelper = new DatabaseHelper();
@@ -103,5 +103,31 @@ public class SubjectsManagementViewModel extends ViewModel {
 
     public void setOutcome(String outcome) {
         this.outcome.setValue(outcome);
+    }
+
+    public void getSubjects(List<String> subjectIds) {
+        databaseHelper.getSubjectsById(subjectIds, getSubjectsSuccess, getSubjectsFailure);
+    }
+
+    private OnSuccessListener getSubjectsSuccess = new OnSuccessListener() {
+        @Override
+        public void onSuccess(Object o) {
+            subjectsSelection.setValue((List<Subject>) o);
+        }
+    };
+
+    private OnFailureListener getSubjectsFailure = new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+            setOutcome("Oops. An error occurred.");
+        }
+    };
+
+    public MutableLiveData<List<Subject>> getSubjectsSelection() {
+        return subjectsSelection;
+    }
+
+    public void setSubjectsSelection(List<Subject> subjectsSelection) {
+        this.subjectsSelection.setValue(subjectsSelection);
     }
 }

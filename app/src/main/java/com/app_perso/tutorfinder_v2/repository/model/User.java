@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class User implements Parcelable {
+public class User implements Parcelable, Comparable<User> {
     private String id;
     private String username;
     private String email;
@@ -187,4 +187,9 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+
+    @Override
+    public int compareTo(User user) {
+        return this.username.compareTo(user.username);
+    }
 }
