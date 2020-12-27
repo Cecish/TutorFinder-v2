@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
@@ -19,6 +20,7 @@ import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.adapter.MatchingTutorsAdapter;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.searchTutors.SearchTutorsViewModel;
+import com.app_perso.tutorfinder_v2.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +38,7 @@ public class SearchResultActivity extends AppCompatActivity implements MatchingT
         setContentView(R.layout.activity_search_result);
 
         RecyclerView matchingTutorsRv = (RecyclerView) findViewById(R.id.matched_tutors_rv);
+        ViewFlipper viewFlipperMatchingTutors = (ViewFlipper) findViewById(R.id.viewFlipperTutorsMatching);
 
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
@@ -63,29 +66,33 @@ public class SearchResultActivity extends AppCompatActivity implements MatchingT
             }
         });
 
-        searchTutorsViewModel.getMatchingTutors().observe(this, matchingTutors -> {
-            final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        if (ArrayUtils.isNullOrEmpty(userSubjectIds)) {
+            viewFlipperMatchingTutors.setDisplayedChild(0);
+        } else {
+            searchTutorsViewModel.getMatchingTutors().observe(this, matchingTutors -> {
+                viewFlipperMatchingTutors.setDisplayedChild((matchingTutors.size() > 0)? 1 : 0);
 
-            //sort tutors list (by alphabetical order)
-            Collections.sort(matchingTutors);
+                final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
-            //TODO no results found
+                //sort tutors list (by alphabetical order)
+                Collections.sort(matchingTutors);
 
-            subjectsManagementViewModel.getSubjects(userSubjectIds);
-            subjectsManagementViewModel.getSubjectsSelection().observe(this, subjectsSelection -> {
-                Collections.sort(subjectsSelection);
-                matchingTutorsRv.setLayoutManager(layoutManager);
-                MatchingTutorsAdapter matchingTutorsAdapter = new MatchingTutorsAdapter(this, matchingTutors, subjectsSelection);
-                matchingTutorsAdapter.addItemClickListener(this);
-                matchingTutorsRv.setAdapter(matchingTutorsAdapter);
+                subjectsManagementViewModel.getSubjects(userSubjectIds);
+                subjectsManagementViewModel.getSubjectsSelection().observe(this, subjectsSelection -> {
+                    Collections.sort(subjectsSelection);
+                    matchingTutorsRv.setLayoutManager(layoutManager);
+                    MatchingTutorsAdapter matchingTutorsAdapter = new MatchingTutorsAdapter(this, matchingTutors, subjectsSelection);
+                    matchingTutorsAdapter.addItemClickListener(this);
+                    matchingTutorsRv.setAdapter(matchingTutorsAdapter);
 
-                if (matchingTutorsRv.getItemDecorationCount() == 0) {
-                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(matchingTutorsRv.getContext(),
-                            layoutManager.getOrientation());
-                    matchingTutorsRv.addItemDecoration(dividerItemDecoration);
-                }
+                    if (matchingTutorsRv.getItemDecorationCount() == 0) {
+                        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(matchingTutorsRv.getContext(),
+                                layoutManager.getOrientation());
+                        matchingTutorsRv.addItemDecoration(dividerItemDecoration);
+                    }
+                });
             });
-        });
+        }
 
     }
 
