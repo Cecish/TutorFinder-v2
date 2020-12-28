@@ -60,6 +60,10 @@
     <string name="matched_subjects">Matched subjects:</string>
     <string name="no_results_found">No results found</string>
     <string name="search_opt2">Search based on selected subjects:</string>
+    <string name="selected_tutor_profile">Selected tutor\'s profile</string>
+    <string name="subjects_tutored">Subjects that can be tutored:</string>
+    <string name="request_session">Request a session</string>
+    <string name="chat">Chat</string>
 
     <!-- Menu options -->
     <string name="log_out">Log out</string>

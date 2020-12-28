@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="24dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/gradient_blue"
+    tools:context=".ui.user.studentTutor.student.ProfileActivity">
+
+    <ImageView
+        android:id="@+id/profile_pic"
+        android:layout_width="@dimen/height_profile_pic"
+        android:layout_height="@dimen/height_profile_pic"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/ic_baseline_account_circle_24"
+        android:contentDescription="@string/profile_picture"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="10dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="@string/subjects_tutored"
+        android:textSize="14sp"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subject_rv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scrollbarStyle="outsideOverlay" />
+
+        <com.alphabetik.Alphabetik
+            android:id="@+id/subject_sectionindex"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:fontSize="14sp"
+            app:itemsColor="@color/design_default_color_primary" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <Button
+            android:id="@+id/request_session_btn"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:paddingEnd="6dp"
+            android:paddingStart="6dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/blue_button_background"
+            android:text="@string/request_session"
+            android:textColor="@color/white"
+            android:drawableStart="@drawable/ic_baseline_calendar_today_24"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"/>
+
+        <Button
+            android:id="@+id/chat_btn"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:paddingEnd="6dp"
+            android:paddingStart="6dp"
+            android:background="@drawable/blue_button_background"
+            android:text="@string/chat"
+            android:drawableStart="@drawable/ic_baseline_chat_24"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"/>
+
+    </LinearLayout>
+
+</LinearLayout>
