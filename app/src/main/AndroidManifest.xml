@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.app_perso.tutorfinder_v2">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_tutor_finder_v2"
@@ -9,9 +11,13 @@
         android:roundIcon="@mipmap/ic_launcher_tutor_finder_v2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.user.studentTutor.student.SearchResultActivity"
+        <activity android:name=".ui.user.studentTutor.student.ProfileActivity"
+            android:label="@string/selected_tutor_profile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.user.studentTutor.student.SearchResultActivity"
             android:label="@string/matched_tutors"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.forgottenPassword.ForgottenPasswordActivity"
             android:screenOrientation="portrait"

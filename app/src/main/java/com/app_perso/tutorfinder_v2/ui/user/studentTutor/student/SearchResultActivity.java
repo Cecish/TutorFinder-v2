@@ -15,6 +15,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.app_perso.tutorfinder_v2.R;
+import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
@@ -24,12 +25,14 @@ import com.app_perso.tutorfinder_v2.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class SearchResultActivity extends AppCompatActivity implements MatchingTutorsAdapter.ItemClickListener {
     private SearchTutorsViewModel searchTutorsViewModel;
     private SignInSignUpViewModel signInSignUpViewModel;
     private SubjectsManagementViewModel subjectsManagementViewModel;
+    private List<User> mMatchingTutors = new ArrayList<>();
 
 
     @Override
@@ -70,6 +73,7 @@ public class SearchResultActivity extends AppCompatActivity implements MatchingT
             viewFlipperMatchingTutors.setDisplayedChild(0);
         } else {
             searchTutorsViewModel.getMatchingTutors().observe(this, matchingTutors -> {
+                mMatchingTutors = matchingTutors;
                 viewFlipperMatchingTutors.setDisplayedChild((matchingTutors.size() > 0)? 1 : 0);
 
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -123,6 +127,9 @@ public class SearchResultActivity extends AppCompatActivity implements MatchingT
 
     @Override
     public void onItemClick(int position) {
-        //TODO in FR-S10
+        Intent intent = new Intent(this, ProfileActivity.class);
+
+        intent.putExtra("tutorUser", mMatchingTutors.get(position));
+        startActivity(intent);
     }
 }
