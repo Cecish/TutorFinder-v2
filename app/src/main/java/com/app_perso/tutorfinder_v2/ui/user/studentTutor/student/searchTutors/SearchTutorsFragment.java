@@ -19,22 +19,28 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alphabetik.Alphabetik;
 import com.app_perso.tutorfinder_v2.R;
+import com.app_perso.tutorfinder_v2.UserSingleton;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementFragment;
 import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
+import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.SubjectAdapter;
 import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.SubjectAdapterCheckBox;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.SearchResultActivity;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.StudentMainActivity;
+import com.app_perso.tutorfinder_v2.util.AdminUtils;
 import com.app_perso.tutorfinder_v2.util.AlphabetikUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class SearchTutorsFragment extends Fragment implements SubjectAdapterCheckBox.ItemClickListener {
     private SubjectsManagementViewModel subjectsManagementViewModel;
     private List<String> newUserSubjectIds = new ArrayList<>();
+    private Observer<List<Subject>> subjectsObserver = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +63,7 @@ public class SearchTutorsFragment extends Fragment implements SubjectAdapterChec
         subjectsRv.setNestedScrollingEnabled(false);
 
         if (getActivity() instanceof StudentMainActivity) {
-            user = ((StudentMainActivity) requireActivity()).user;
+            user = Objects.requireNonNull(UserSingleton.getInstance(null).getUser());
         } else {
             throw new IllegalStateException("User not found");
         }
@@ -84,42 +90,44 @@ public class SearchTutorsFragment extends Fragment implements SubjectAdapterChec
             }
         });
 
-        //Alphabetically ordered list of learning needs (student) or tutoring subjects (tutors)
-        subjectsManagementViewModel.getAllSubjects();
-        subjectsManagementViewModel.getSubjects().observe(
-                getViewLifecycleOwner(),
-                (Observer<List<Subject>>) subjects -> {
-                    if (subjects.size() == 0) {
-                        Toast.makeText(requireContext(), getResources().getString(R.string.error_no_subjects), Toast.LENGTH_SHORT).show();
-                    } else {
-                        //sort subject list
-                        Collections.sort(subjects);
+        subjectsObserver = new Observer<List<Subject>>() {
+            @Override
+            public void onChanged(@Nullable final List<Subject> subjects) {
+                if (subjects.size() == 0) {
+                    Toast.makeText(requireContext(), getResources().getString(R.string.error_no_subjects), Toast.LENGTH_SHORT).show();
+                } else {
+                    //sort subject list
+                    Collections.sort(subjects);
 
-                        //Set alphabet relevant with the subjects' names
-                        String[] alphabet = AlphabetikUtils.getCustomAlphabetList(subjects);
-                        alphabetik.setAlphabet(alphabet);
+                    //Set alphabet relevant with the subjects' names
+                    String[] alphabet = AlphabetikUtils.getCustomAlphabetList(subjects);
+                    alphabetik.setAlphabet(alphabet);
 
-                        alphabetik.onSectionIndexClickListener(new Alphabetik.SectionIndexClickListener() {
-                            @Override
-                            public void onItemClick(View view, int position, String character) {
-                                subjectsRv.smoothScrollToPosition(AlphabetikUtils.getPositionFromData(character, subjects));
-                            }
-                        });
-
-                        subjectsRv.setLayoutManager(layoutManager);
-                        SubjectAdapterCheckBox subjectAdapter = new SubjectAdapterCheckBox(requireContext(),
-                                subjects, new ArrayList<>(), false);
-                        subjectAdapter.addItemClickListener(this);
-                        subjectsRv.setAdapter(subjectAdapter);
-
-                        if (subjectsRv.getItemDecorationCount() == 0) {
-                            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(subjectsRv.getContext(),
-                                    layoutManager.getOrientation());
-                            subjectsRv.addItemDecoration(dividerItemDecoration);
+                    alphabetik.onSectionIndexClickListener(new Alphabetik.SectionIndexClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position, String character) {
+                            subjectsRv.smoothScrollToPosition(AlphabetikUtils.getPositionFromData(character, subjects));
                         }
+                    });
+
+                    subjectsRv.setLayoutManager(layoutManager);
+                    SubjectAdapterCheckBox subjectAdapter = new SubjectAdapterCheckBox(requireContext(),
+                            subjects, new ArrayList<>(), false);
+                    subjectAdapter.addItemClickListener(SearchTutorsFragment.this::onItemClick);
+                    subjectsRv.setAdapter(subjectAdapter);
+
+                    if (subjectsRv.getItemDecorationCount() == 0) {
+                        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(subjectsRv.getContext(),
+                                layoutManager.getOrientation());
+                        subjectsRv.addItemDecoration(dividerItemDecoration);
                     }
                 }
-        );
+            }
+        };
+
+        //Alphabetically ordered list of learning needs (student) or tutoring subjects (tutors)
+        subjectsManagementViewModel.getAllSubjects();
+        subjectsManagementViewModel.getSubjects().observe(getViewLifecycleOwner(), subjectsObserver);
     }
 
     @Override
@@ -129,5 +137,12 @@ public class SearchTutorsFragment extends Fragment implements SubjectAdapterChec
         } else {
             newUserSubjectIds.remove(subject.getId());
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        subjectsManagementViewModel.getSubjects().removeObserver(subjectsObserver);
     }
 }

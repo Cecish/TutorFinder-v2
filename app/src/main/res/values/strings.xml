@@ -63,7 +63,11 @@
     <string name="selected_tutor_profile">Selected tutor\'s profile</string>
     <string name="subjects_tutored">Subjects that can be tutored:</string>
     <string name="request_session">Request a session</string>
+    <string name="request_session2">Send request</string>
     <string name="chat">Chat</string>
+    <string name="subject_of_interest">The subject you are interested in:</string>
+    <string name="cancel">Cancel</string>
+    <string name="request_sent">Your request has been sent</string>
 
     <!-- Menu options -->
     <string name="log_out">Log out</string>

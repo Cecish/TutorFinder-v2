@@ -9,7 +9,6 @@ import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.Status;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
-import com.app_perso.tutorfinder_v2.util.StringUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -258,14 +257,35 @@ public class AuthRepository {
         try {
             User user;
 
-            if (map.get("subjects") == null) {
+            if (map.get("subjects") == null && map.get("sessions") == null) {
                 user = new User(
                         Objects.requireNonNull(map.get("id")).toString(),
                         Objects.requireNonNull(map.get("username")).toString(),
                         Objects.requireNonNull(map.get("email")).toString(),
                         Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
                         Status.valueOf(Objects.requireNonNull(map.get("status")).toString()),
+                        new ArrayList<>(),
                         new ArrayList<>()
+                );
+            } else  if (map.get("subjects") != null && map.get("sessions") == null) {
+                user = new User(
+                        Objects.requireNonNull(map.get("id")).toString(),
+                        Objects.requireNonNull(map.get("username")).toString(),
+                        Objects.requireNonNull(map.get("email")).toString(),
+                        Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
+                        Status.valueOf(Objects.requireNonNull(map.get("status")).toString()),
+                        (List<String>) Objects.requireNonNull(map.get("subjects")),
+                        new ArrayList<>()
+                );
+            } else  if (map.get("subjects") == null && map.get("sessions") != null) {
+                user = new User(
+                        Objects.requireNonNull(map.get("id")).toString(),
+                        Objects.requireNonNull(map.get("username")).toString(),
+                        Objects.requireNonNull(map.get("email")).toString(),
+                        Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
+                        Status.valueOf(Objects.requireNonNull(map.get("status")).toString()),
+                        new ArrayList<>(),
+                        (List<String>) Objects.requireNonNull(map.get("sessions"))
                 );
             } else {
                 user = new User(
@@ -274,7 +294,8 @@ public class AuthRepository {
                         Objects.requireNonNull(map.get("email")).toString(),
                         Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
                         Status.valueOf(Objects.requireNonNull(map.get("status")).toString()),
-                        (List<String>) Objects.requireNonNull(map.get("subjects"))
+                        (List<String>) Objects.requireNonNull(map.get("subjects")),
+                        (List<String>) Objects.requireNonNull(map.get("sessions"))
                 );
             }
 

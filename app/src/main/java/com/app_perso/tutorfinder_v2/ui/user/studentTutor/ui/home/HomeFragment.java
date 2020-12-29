@@ -28,6 +28,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.app_perso.tutorfinder_v2.R;
+import com.app_perso.tutorfinder_v2.UserSingleton;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.StudentMainActivity;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.TutorMainActivity;
@@ -35,6 +36,7 @@ import com.app_perso.tutorfinder_v2.util.FirestoreUtils;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 import static com.app_perso.tutorfinder_v2.util.FirestoreUtils.RESULT_LOAD_IMAGE;
@@ -43,6 +45,7 @@ public class HomeFragment extends Fragment {
     private HomeViewModel homeViewModel;
     private ImageView profilePic;
     private User user;
+    private Observer<Boolean> refreshProfilePicObserver = null;
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -59,24 +62,26 @@ public class HomeFragment extends Fragment {
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
 
         if (getActivity() instanceof StudentMainActivity) {
-            user = ((StudentMainActivity) requireActivity()).user;
+            user = Objects.requireNonNull(UserSingleton.getInstance(null).getUser());
         } else if (getActivity() instanceof TutorMainActivity) {
-            user = ((TutorMainActivity) requireActivity()).user;
+            user = Objects.requireNonNull(UserSingleton.getInstance(null).getUser());
         } else {
             throw new IllegalStateException("User not found");
         }
+
+        refreshProfilePicObserver = new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable final Boolean aBoolean) {
+                FirestoreUtils.loadProfilePicture(profilePic, user.getId(), getContext());
+            }
+        };
 
         //Populate profile info
         usernameTv.setText(user.getUsername());
         FirestoreUtils.loadProfilePicture(profilePic, user.getId(), getContext());
 
         //Refresh profile pic when a new one is uploaded
-        homeViewModel.getRefreshProfilePic().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                FirestoreUtils.loadProfilePicture(profilePic, user.getId(), getContext());
-            }
-        });
+        homeViewModel.getRefreshProfilePic().observe(getViewLifecycleOwner(), refreshProfilePicObserver);
 
         //Edit profile picture
         editProfilePic.setOnClickListener(new View.OnClickListener() {
@@ -185,5 +190,12 @@ public class HomeFragment extends Fragment {
                 });
         AlertDialog alert = alertBuilder.create();
         alert.show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        homeViewModel.getRefreshProfilePic().removeObserver(refreshProfilePicObserver);
     }
 }

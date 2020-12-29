@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.app_perso.tutorfinder_v2.repository.model.Session;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,9 +25,11 @@ import java.util.Objects;
 public class DatabaseHelper {
     private final String COLLECTION_USERS = "tutor_finder_users";
     private final String COLLECTION_SUBJECTS = "tutor_finder_subjects";
+    private final String COLLECTION_SESSIONS = "tutor_finder_sessions";
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private CollectionReference collectionReferenceUsers = firebaseFirestore.collection(COLLECTION_USERS);
     private CollectionReference collectionReferenceSubjects = firebaseFirestore.collection(COLLECTION_SUBJECTS);
+    private CollectionReference collectionReferenceSesions = firebaseFirestore.collection(COLLECTION_SESSIONS);
 
     //if the entity is present in the database update the record, else create new record
     public void upsertUser(final User user, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
@@ -160,5 +163,50 @@ public class DatabaseHelper {
             Log.d("ERROR", "Map Firebase document data is incorrect");
             throw e;
         }
+    }
+
+    public void upsertSession(final Session session, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
+        DocumentReference uidRef;
+
+        if (session.getId() == null) {
+            uidRef = collectionReferenceSesions.document();
+            session.setId(uidRef.getId());
+        } else {
+            uidRef = collectionReferenceSesions.document(session.getId());
+        }
+
+        uidRef.set(session.genSessionForDb())
+                .addOnSuccessListener(new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        successListener.onSuccess(session);
+                    }
+                })
+                .addOnFailureListener(failureListener);
+    }
+
+    public void addSession(final String subjectName, final String sessionDate, @NonNull final OnSuccessListener successListener,
+                           @NonNull final OnFailureListener failureListener) {
+        collectionReferenceSesions
+                .whereEqualTo("subjectName", subjectName)
+                .whereEqualTo("date", sessionDate)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+
+                            if (task.getResult().size() == 0) {
+                                //Add new subject
+                                upsertSession(new Session(sessionDate, subjectName), successListener, failureListener);
+
+                            } else {
+                                successListener.onSuccess("Session at " + sessionDate + " for subject " + subjectName + " is already added");
+                            }
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
     }
 }

@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.app_perso.tutorfinder_v2.util.ArrayUtils;
 import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.Status;
 import com.app_perso.tutorfinder_v2.util.StringUtils;
@@ -23,6 +24,7 @@ public class User implements Parcelable, Comparable<User> {
     private Role role;
     private Status status; // for tutors
     private List<String> subjectIds;
+    private List<String> sessionIds;
 
     public User(String username, String email, String password, Role role) {
         this.username = username;
@@ -30,6 +32,7 @@ public class User implements Parcelable, Comparable<User> {
         this.password = password;
         this.role = role;
         this.subjectIds = new ArrayList<>();
+        this.sessionIds = new ArrayList<>();
     }
 
     public User(String email, String password) {
@@ -45,13 +48,14 @@ public class User implements Parcelable, Comparable<User> {
     }
 
     //Only used to retrieve a user from a Firestore document
-    public User(String id, String username, String email, Role role, Status status, List<String> subjectIds) {
+    public User(String id, String username, String email, Role role, Status status, List<String> subjectIds, List<String> sessionIds) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.role = role;
         this.status = status;
         this.subjectIds = subjectIds;
+        this.sessionIds = sessionIds;
     }
 
     public  String getId() {
@@ -82,8 +86,16 @@ public class User implements Parcelable, Comparable<User> {
         return this.subjectIds;
     }
 
+    public List<String> getSessionIds() {
+        return this.sessionIds;
+    }
+
     public void setSubjectIds(List<String> subjectIds) {
         this.subjectIds = subjectIds;
+    }
+
+    public void setSessionIds(List<String> sessionIds) {
+        this.sessionIds = sessionIds;
     }
 
     public void setUsername(String username) {
@@ -114,6 +126,14 @@ public class User implements Parcelable, Comparable<User> {
         return this.password == null || this.password.length() < 6;
     }
 
+    public void addSessionId(String sessionId) {
+        if (ArrayUtils.isNullOrEmpty(this.sessionIds)) {
+            this.sessionIds = new ArrayList<>();
+        }
+
+        this.sessionIds.add(sessionId);
+    }
+
     public Map<String, Object> genUserForDb() {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("id", id);
@@ -122,6 +142,7 @@ public class User implements Parcelable, Comparable<User> {
         userMap.put("role", role);
         userMap.put("status", status);
         userMap.put("subjects", subjectIds);
+        userMap.put("sessions", sessionIds);
 
         return userMap;
     }
@@ -136,13 +157,14 @@ public class User implements Parcelable, Comparable<User> {
                 ", role=" + role +
                 ", status=" + status + '\'' +
                 ", subjects=" + subjectIds + '\'' +
+                ", sessions=" + sessionIds + '\'' +
                 '}';
     }
 
 
     // Parcelling part
     public User(Parcel in){
-        String[] data = new String[7];
+        String[] data = new String[8];
 
         in.readStringArray(data);
         // the order needs to be the same as in writeToParcel() method
@@ -153,6 +175,7 @@ public class User implements Parcelable, Comparable<User> {
         this.role = Role.valueOf(data[4]);
         this.status = Status.valueOf(data[5]);
         this.subjectIds = StringUtils.stringToList(data[6]);
+        this.sessionIds = StringUtils.stringToList(data[7]);
     }
 
     @Override
@@ -163,9 +186,14 @@ public class User implements Parcelable, Comparable<User> {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         String subjects = "";
+        String sessions = "";
 
-        if (subjectIds != null) {
+        if (!ArrayUtils.isNullOrEmpty(subjectIds)) {
             subjects = StringUtils.listToString(subjectIds);
+        }
+
+        if (!ArrayUtils.isNullOrEmpty(sessionIds)) {
+            sessions = StringUtils.listToString(sessionIds);
         }
 
         dest.writeStringArray(new String[] {
@@ -175,7 +203,8 @@ public class User implements Parcelable, Comparable<User> {
                 this.password,
                 this.role.name(),
                 this.status.name(),
-                subjects
+                subjects,
+                sessions
         });
     }
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

@@ -33,6 +33,8 @@ import java.util.Objects;
 public class SubjectsManagementFragment extends Fragment implements SubjectAdapter.ItemClickListener {
     private Fragment mFragment;
     private SubjectsManagementViewModel subjectsManagementViewModel;
+    private Observer<List<Subject>> subjectsObserver = null;
+    private Observer<String> outcomeObserver = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -51,46 +53,53 @@ public class SubjectsManagementFragment extends Fragment implements SubjectAdapt
         final FloatingActionButton fabAddSubject = view.findViewById(R.id.fab_add_subject);
         mFragment = this;
 
-        subjectsManagementViewModel.getAllSubjects();
-        subjectsManagementViewModel.getSubjects().observe(
-                getViewLifecycleOwner(),
-                (Observer<List<Subject>>) subjects -> {
-                    if (subjects.size() == 0) {
-                        AdminUtils.configViewFlipper(viewFlipper, fabAddSubject, 0);
-                    } else {
-                        AdminUtils.configViewFlipper(viewFlipper, fabAddSubject, 1);
+        subjectsObserver = new Observer<List<Subject>>() {
+            @Override
+            public void onChanged(@Nullable final List<Subject> subjects) {
+                if (Objects.requireNonNull(subjects).size() == 0) {
+                    AdminUtils.configViewFlipper(viewFlipper, fabAddSubject, 0);
+                } else {
+                    AdminUtils.configViewFlipper(viewFlipper, fabAddSubject, 1);
 
-                        //sort subject list
-                        Collections.sort(subjects);
+                    //sort subject list
+                    Collections.sort(subjects);
 
-                        //Set alphabet relevant with the subjects' names
-                        String[] alphabet = AlphabetikUtils.getCustomAlphabetList(subjects);
-                        alphabetik.setAlphabet(alphabet);
+                    //Set alphabet relevant with the subjects' names
+                    String[] alphabet = AlphabetikUtils.getCustomAlphabetList(subjects);
+                    alphabetik.setAlphabet(alphabet);
 
-                        alphabetik.onSectionIndexClickListener(new Alphabetik.SectionIndexClickListener() {
-                            @Override
-                            public void onItemClick(View view, int position, String character) {
-                                recyclerView.smoothScrollToPosition(AlphabetikUtils.getPositionFromData(character, subjects));
-                            }
-                        });
-
-                        recyclerView.setLayoutManager(layoutManager);
-                        SubjectAdapter subjectAdapter = new SubjectAdapter(requireContext(), subjects);
-                        subjectAdapter.addItemClickListener(this);
-                        recyclerView.setAdapter(subjectAdapter);
-
-                        if (recyclerView.getItemDecorationCount() == 0) {
-                            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                                    layoutManager.getOrientation());
-                            recyclerView.addItemDecoration(dividerItemDecoration);
+                    alphabetik.onSectionIndexClickListener(new Alphabetik.SectionIndexClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position, String character) {
+                            recyclerView.smoothScrollToPosition(AlphabetikUtils.getPositionFromData(character, subjects));
                         }
+                    });
+
+                    recyclerView.setLayoutManager(layoutManager);
+                    SubjectAdapter subjectAdapter = new SubjectAdapter(requireContext(), subjects);
+                    subjectAdapter.addItemClickListener(SubjectsManagementFragment.this::onItemClick);
+                    recyclerView.setAdapter(subjectAdapter);
+
+                    if (recyclerView.getItemDecorationCount() == 0) {
+                        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                                layoutManager.getOrientation());
+                        recyclerView.addItemDecoration(dividerItemDecoration);
                     }
                 }
-        );
+            }
+        };
 
-        subjectsManagementViewModel.getOutcome().observe(getViewLifecycleOwner(), (Observer<String>) it -> {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show();
-        });
+        outcomeObserver = new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable final String outcome) {
+                Toast.makeText(requireContext(), outcome, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        subjectsManagementViewModel.getAllSubjects();
+        subjectsManagementViewModel.getSubjects().observe(getViewLifecycleOwner(), subjectsObserver);
+
+        subjectsManagementViewModel.getOutcome().observe(getViewLifecycleOwner(), outcomeObserver);
 
         fabAddSubject.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,5 +114,13 @@ public class SubjectsManagementFragment extends Fragment implements SubjectAdapt
     public void onItemClick(int position) {
         DialogUtils.buildDialog(requireContext(), R.string.edit_subject, R.string.edit, mFragment, subjectsManagementViewModel,
                 Objects.requireNonNull(subjectsManagementViewModel.subjects.getValue()).get(position));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        subjectsManagementViewModel.getSubjects().removeObserver(subjectsObserver);
+        subjectsManagementViewModel.getOutcome().removeObserver(outcomeObserver);
     }
 }

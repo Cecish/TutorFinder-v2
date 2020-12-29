@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.app_perso.tutorfinder_v2.R;
+import com.app_perso.tutorfinder_v2.UserSingleton;
 import com.app_perso.tutorfinder_v2.databinding.FragmentSignInBinding;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.TutorMainActivity;
 import com.app_perso.tutorfinder_v2.repository.model.User;
@@ -138,7 +139,7 @@ public class SignInFragment extends Fragment  {
             }
 
             if (intent != null) {
-                intent.putExtra("AuthenticatedUser", signInUser);
+                UserSingleton.getInstance(signInUser);
                 startActivity(intent);
                 activity.finish();
             }

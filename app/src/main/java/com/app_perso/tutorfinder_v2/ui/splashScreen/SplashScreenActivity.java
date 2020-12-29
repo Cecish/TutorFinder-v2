@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app_perso.tutorfinder_v2.R;
+import com.app_perso.tutorfinder_v2.UserSingleton;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.TutorMainActivity;
 import com.app_perso.tutorfinder_v2.util.AnimationSplashScreenUtils;
 import com.app_perso.tutorfinder_v2.ui.user.admin.AdminHomeActivity;
@@ -62,17 +63,17 @@ public class SplashScreenActivity extends AppCompatActivity {
                 switch (user.getRole()) {
                     case STUDENT:
                         intent = new Intent(SplashScreenActivity.this, StudentMainActivity.class);
-                        intent.putExtra("AuthenticatedUser", user);
+                        UserSingleton.getInstance(user);
                         break;
 
                     case TUTOR:
                         intent = new Intent(SplashScreenActivity.this, TutorMainActivity.class);
-                        intent.putExtra("AuthenticatedUser", user);
+                        UserSingleton.getInstance(user);
                         break;
 
                     case ADMIN:
                         intent = new Intent(SplashScreenActivity.this, AdminHomeActivity.class);
-                        intent.putExtra("AuthenticatedUser", user);
+                        UserSingleton.getInstance(user);
                         break;
 
                     default:

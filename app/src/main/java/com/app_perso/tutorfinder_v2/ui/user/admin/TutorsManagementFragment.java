@@ -29,6 +29,9 @@ public class TutorsManagementFragment extends Fragment {
 
     private TutorsManagementViewModel tutorsManagementViewModel;
     private RecyclerView recyclerView;
+    private Observer<List<User>> pendingTutorsObserver = null;
+    private Observer<Boolean> refreshObserver = null;
+    private Observer<String> outcomeObserver = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -45,37 +48,48 @@ public class TutorsManagementFragment extends Fragment {
         final SwipeRefreshLayout mSwipeRefreshLayout = view.findViewById(R.id.swipe_to_refresh);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
 
+        pendingTutorsObserver = new Observer<List<User>>() {
+            @Override
+            public void onChanged(@Nullable final List<User> pendingTutors) {
+                if (pendingTutors.size() == 0) {
+                    AdminUtils.configViewFlipper(viewFlipper, null, 0);
+                } else {
+                    AdminUtils.configViewFlipper(viewFlipper, null, 1);
+
+                    displayRequestsInfo(pendingTutors, viewFlipper.getCurrentView().findViewById(R.id.nb_requests_tv),
+                            recyclerView = viewFlipper.getCurrentView().findViewById(R.id.registration_requests_rv));
+                    recyclerView.setLayoutManager(layoutManager);
+                    recyclerView.setAdapter(new PendingTutorAdapter(requireContext(), pendingTutors, tutorsManagementViewModel));
+
+                    if (recyclerView.getItemDecorationCount() == 0) {
+                        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                                layoutManager.getOrientation());
+                        recyclerView.addItemDecoration(dividerItemDecoration);
+                    }
+                }
+            }
+        };
+
+        outcomeObserver = new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable final String outcome) {
+                Toast.makeText(requireContext(), outcome, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        refreshObserver = new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable final Boolean refresh) {
+                mSwipeRefreshLayout.setRefreshing(refresh);
+            }
+        };
+
         tutorsManagementViewModel.getAllPendingRequests();
-        tutorsManagementViewModel.getPendingTutors().observe(
-                        getViewLifecycleOwner(),
-                        (Observer<List<User>>) pendingTutors -> {
-                            if (pendingTutors.size() == 0) {
-                                AdminUtils.configViewFlipper(viewFlipper, null, 0);
-                            } else {
-                                AdminUtils.configViewFlipper(viewFlipper, null, 1);
+        tutorsManagementViewModel.getPendingTutors().observe(getViewLifecycleOwner(), pendingTutorsObserver);
 
-                                displayRequestsInfo(pendingTutors, viewFlipper.getCurrentView().findViewById(R.id.nb_requests_tv),
-                                recyclerView = viewFlipper.getCurrentView().findViewById(R.id.registration_requests_rv));
-                                recyclerView.setLayoutManager(layoutManager);
-                                recyclerView.setAdapter(new PendingTutorAdapter(requireContext(), pendingTutors, tutorsManagementViewModel));
+        tutorsManagementViewModel.getRefresh().observe(getViewLifecycleOwner(), refreshObserver);
 
-                                if (recyclerView.getItemDecorationCount() == 0) {
-                                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                                            layoutManager.getOrientation());
-                                    recyclerView.addItemDecoration(dividerItemDecoration);
-                                }
-                            }
-                        }
-        );
-
-        tutorsManagementViewModel.getRefresh().observe(getViewLifecycleOwner(),
-                (Observer<Boolean>) refresh -> {
-                    mSwipeRefreshLayout.setRefreshing(refresh);
-                });
-
-        tutorsManagementViewModel.getOutcome().observe(getViewLifecycleOwner(), (Observer<String>) it -> {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show();
-        });
+        tutorsManagementViewModel.getOutcome().observe(getViewLifecycleOwner(), outcomeObserver);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -89,4 +103,14 @@ public class TutorsManagementFragment extends Fragment {
     private void displayRequestsInfo(List<User> requests, TextView nbRequestsTv, RecyclerView requestsRv) {
         nbRequestsTv.setText(getString(R.string.registration_requests_nb, requests.size()));
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        tutorsManagementViewModel.getPendingTutors().removeObserver(pendingTutorsObserver);
+        tutorsManagementViewModel.getRefresh().removeObserver(refreshObserver);
+        tutorsManagementViewModel.getOutcome().removeObserver(outcomeObserver);
+    }
+
 }

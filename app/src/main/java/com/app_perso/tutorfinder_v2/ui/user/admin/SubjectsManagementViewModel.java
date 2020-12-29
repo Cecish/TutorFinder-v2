@@ -53,7 +53,6 @@ public class SubjectsManagementViewModel extends ViewModel {
     private OnSuccessListener addSubjectSuccess = new OnSuccessListener() {
         @Override
         public void onSuccess(Object o) {
-
             if (o instanceof Subject) {
                 addSubjectLiveData((Subject) o);
             } else if (o instanceof String) {

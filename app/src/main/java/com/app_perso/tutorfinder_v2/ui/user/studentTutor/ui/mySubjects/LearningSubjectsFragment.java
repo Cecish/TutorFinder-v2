@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alphabetik.Alphabetik;
 import com.app_perso.tutorfinder_v2.R;
+import com.app_perso.tutorfinder_v2.UserSingleton;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
@@ -34,10 +35,12 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 public class LearningSubjectsFragment extends Fragment implements SubjectAdapterCheckBox.ItemClickListener {
     private SubjectsManagementViewModel subjectsManagementViewModel;
+    private LearningSubjectsViewModel learningSubjectsViewModel;
     private List<String> userSubjectIds = new ArrayList<>();
     private List<String> newUserSubjectIds = new ArrayList<>();
     private FloatingActionButton saveFab;
@@ -47,14 +50,14 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
             ViewGroup container, Bundle savedInstanceState) {
         subjectsManagementViewModel =
                 ViewModelProviders.of(this).get(SubjectsManagementViewModel.class);
+        learningSubjectsViewModel =
+                ViewModelProviders.of(this).get(LearningSubjectsViewModel.class);
 
         return inflater.inflate(R.layout.fragment_learning_needs, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        LearningSubjectsViewModel learningSubjectsViewModel =
-                ViewModelProviders.of(this).get(LearningSubjectsViewModel.class);
         SwitchMaterial editToggle = (SwitchMaterial) view.findViewById(R.id.edit_toggle);
         TextView learningNeedsTv = (TextView) view.findViewById(R.id.text_subjects);
         ViewFlipper viewFlipper = (ViewFlipper) view.findViewById(R.id.view_flipper_subjects);
@@ -65,10 +68,10 @@ public class LearningSubjectsFragment extends Fragment implements SubjectAdapter
         boolean hasSubjects;
 
         if (getActivity() instanceof StudentMainActivity) {
-            user = ((StudentMainActivity) requireActivity()).user;
+            user = Objects.requireNonNull(UserSingleton.getInstance(null).getUser());
             learningNeedsTv.setText(getString(R.string.my_learning_needs));
         } else if (getActivity() instanceof TutorMainActivity) {
-            user = ((TutorMainActivity) requireActivity()).user;
+            user = Objects.requireNonNull(UserSingleton.getInstance(null).getUser());
             learningNeedsTv.setText(getString(R.string.my_teaching_subjects));
         } else {
             throw new IllegalStateException("User not found");
