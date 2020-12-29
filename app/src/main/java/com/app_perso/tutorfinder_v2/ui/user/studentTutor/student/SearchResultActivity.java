@@ -1,5 +1,6 @@
 package com.app_perso.tutorfinder_v2.ui.user.studentTutor.student;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.app_perso.tutorfinder_v2.R;
+import com.app_perso.tutorfinder_v2.UserSingleton;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
@@ -33,12 +35,16 @@ public class SearchResultActivity extends AppCompatActivity implements MatchingT
     private SignInSignUpViewModel signInSignUpViewModel;
     private SubjectsManagementViewModel subjectsManagementViewModel;
     private List<User> mMatchingTutors = new ArrayList<>();
-
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
+
+        if (savedInstanceState != null){
+            UserSingleton.getInstance(savedInstanceState.getParcelable("currentUser"));
+        }
 
         RecyclerView matchingTutorsRv = (RecyclerView) findViewById(R.id.matched_tutors_rv);
         ViewFlipper viewFlipperMatchingTutors = (ViewFlipper) findViewById(R.id.viewFlipperTutorsMatching);
@@ -58,6 +64,7 @@ public class SearchResultActivity extends AppCompatActivity implements MatchingT
 
         Intent intent = getIntent();
         Bundle args = intent.getBundleExtra("BUNDLE");
+        user = Objects.requireNonNull(UserSingleton.getInstance(null).getUser());
         ArrayList<String> userSubjectIds = (ArrayList<String>) Objects.requireNonNull(args).getSerializable("USER_SUBJECT_IDS");
 
         searchTutorsViewModel.searchTutors(userSubjectIds);
@@ -101,6 +108,13 @@ public class SearchResultActivity extends AppCompatActivity implements MatchingT
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        searchTutorsViewModel.searchTutors(user.getSubjectIds());
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_menu, menu);
         return true;
@@ -115,6 +129,7 @@ public class SearchResultActivity extends AppCompatActivity implements MatchingT
 
             case R.id.menu_log_out_option:
                 //Logout
+                UserSingleton.reset();
                 signInSignUpViewModel.signOut();
                 startActivity(new Intent(SearchResultActivity.this, SignInSignUpActivity.class));
                 finish();
@@ -128,8 +143,14 @@ public class SearchResultActivity extends AppCompatActivity implements MatchingT
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(this, ProfileActivity.class);
-
-        intent.putExtra("tutorUser", mMatchingTutors.get(position));
+        Bundle args = new Bundle();
+        args.putParcelable("tutorUser", mMatchingTutors.get(position));
+        intent.putExtra("BUNDLE", args);
         startActivity(intent);
+    }
+
+    protected void onSaveInstanceState(@NonNull Bundle mBundle) {
+        super.onSaveInstanceState(mBundle);
+        mBundle.putParcelable("currentUser", Objects.requireNonNull(UserSingleton.getInstance(null).getUser()));
     }
 }

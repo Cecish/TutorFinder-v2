@@ -47,13 +47,6 @@
             android:layout_height="wrap_content"
             android:headerBackground="@color/lighterBlue" />
 
-        <TextView
-            android:id="@+id/textViewShowDateTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue"
-            android:text="" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

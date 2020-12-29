@@ -1,5 +1,7 @@
 package com.app_perso.tutorfinder_v2.ui.user.studentTutor.student;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
@@ -14,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,18 +31,23 @@ import android.widget.Toast;
 
 import com.alphabetik.Alphabetik;
 import com.app_perso.tutorfinder_v2.R;
+import com.app_perso.tutorfinder_v2.UserSingleton;
+import com.app_perso.tutorfinder_v2.repository.model.Session;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.SubjectAdapter;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.sessions.SessionsManagementViewModel;
 import com.app_perso.tutorfinder_v2.util.AlphabetikUtils;
 import com.app_perso.tutorfinder_v2.util.FirestoreUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
@@ -54,7 +60,6 @@ public class ProfileActivity extends AppCompatActivity {
     private int day;
     private int hour;
     private int minute;
-    private int seconds;
     private Context context = this;
     private LifecycleOwner lifecycleOwner = this;
 
@@ -62,6 +67,10 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        if (savedInstanceState != null){
+            UserSingleton.getInstance(savedInstanceState.getParcelable("currentUser"));
+        }
 
         TextView usernameTv = (TextView) findViewById(R.id.username);
         ImageView profilePic = (ImageView) findViewById(R.id.profile_pic);
@@ -72,13 +81,19 @@ public class ProfileActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(this);
         dialog.getWindow();
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.custom_dialog_request_session);
 
         signInSignUpViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(SignInSignUpViewModel.class);
         SubjectsManagementViewModel subjectsManagementViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(SubjectsManagementViewModel.class);
+        SessionsManagementViewModel sessionsManagementViewModel = new ViewModelProvider(this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(SessionsManagementViewModel.class);
 
-        User tutor = Objects.requireNonNull(getIntent().getExtras()).getParcelable("tutorUser");
+        Intent intent = getIntent();
+        Bundle args = intent.getBundleExtra("BUNDLE");
+        User currentUser = Objects.requireNonNull(UserSingleton.getInstance(null).getUser());
+        User tutor = Objects.requireNonNull(args).getParcelable("tutorUser");
 
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
@@ -125,15 +140,26 @@ public class ProfileActivity extends AppCompatActivity {
                 }
         );
 
+        final Observer<Session> addedSessionObserver = new Observer<Session>() {
+            @Override
+            public void onChanged(@Nullable final Session addedSession) {
+                if (addedSession != null) {
+                    currentUser.addSessionId(Objects.requireNonNull(addedSession.getId()));
+                    tutor.addSessionId(Objects.requireNonNull(addedSession.getId()));
+                    sessionsManagementViewModel.updateUsersSession(Arrays.asList(currentUser, tutor));
+                    sessionsManagementViewModel.setAddedSession(null);
+                }
+            }
+        };
+
         requestSessionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.setContentView(R.layout.custom_dialog_request_session);
                 dialog.show();
 
                 Button bt_yes = (Button) dialog.findViewById(R.id.request_btn);
                 Button bt_no = (Button) dialog.findViewById(R.id.cancel_request_btn);
-                Spinner dropdownSubjects = dialog.findViewById(R.id.spinner_subjects);
+                Spinner dropdownSubjects = (Spinner) dialog.findViewById(R.id.spinner_subjects);
 
                 //create a list of items for the spinner.
                 subjectsManagementViewModel.getSubjectsSelection().observe(
@@ -151,6 +177,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 // Get current calendar date and time.
                 Calendar currCalendar = Calendar.getInstance();
+                currCalendar.setTime(new Date());
 
                 // Set the timezone which you want to display time.
                 currCalendar.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
@@ -160,9 +187,6 @@ public class ProfileActivity extends AppCompatActivity {
                 day = currCalendar.get(Calendar.DAY_OF_MONTH);
                 hour = currCalendar.get(Calendar.HOUR_OF_DAY);
                 minute = currCalendar.get(Calendar.MINUTE);
-                seconds = currCalendar.get(Calendar.SECOND);
-
-                showUserSelectDateTime(dialog);
 
                 // Get date picker object.
                 DatePicker datePicker = (DatePicker) dialog.findViewById(R.id.datePickerExample);
@@ -172,8 +196,6 @@ public class ProfileActivity extends AppCompatActivity {
                         ProfileActivity.this.year = year;
                         ProfileActivity.this.month = month;
                         ProfileActivity.this.day = day;
-
-                        showUserSelectDateTime(dialog);
                     }
                 });
 
@@ -187,20 +209,32 @@ public class ProfileActivity extends AppCompatActivity {
                     timePicker.setMinute(minute);
                 }
 
-                timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-                    @Override
-                    public void onTimeChanged(TimePicker timePicker, int hour, int minute) {
-                        ProfileActivity.this.hour = hour;
-                        ProfileActivity.this.minute = minute;
-
-                        showUserSelectDateTime(dialog);
-                    }
-                });
-
                 bt_yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //TODO
+                        datePicker.clearChildFocus(getCurrentFocus());
+                        timePicker.clearChildFocus(getCurrentFocus());
+
+                        if (Build.VERSION.SDK_INT < 23){
+                            hour = timePicker.getCurrentHour();
+                            minute = timePicker.getCurrentMinute();
+                        } else {
+                            hour = timePicker.getHour();
+                            minute = timePicker.getMinute();
+                        }
+
+                        Calendar cal = Calendar.getInstance();
+                        cal.set(Calendar.YEAR, year);
+                        cal.set(Calendar.MONTH, month);
+                        cal.set(Calendar.DAY_OF_MONTH, day);
+                        cal.set(Calendar.HOUR, hour);
+                        cal.set(Calendar.MINUTE, minute);
+                        cal.set(Calendar.SECOND, 0);
+                        cal.set(Calendar.MILLISECOND, 0);
+                        sessionsManagementViewModel.addSession(dropdownSubjects.getSelectedItem().toString(),
+                                cal.getTime().toString());
+                        sessionsManagementViewModel.getAddedSession().observe(lifecycleOwner, addedSessionObserver);
+                        dialog.dismiss();
                     }
                 });
                 bt_no.setOnClickListener(new View.OnClickListener() {
@@ -209,6 +243,20 @@ public class ProfileActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
+            }
+        });
+
+        sessionsManagementViewModel.getOutcome().observe(this, outcome -> {
+            if (outcome.length() > 0) {
+                Toast.makeText(this, outcome, Toast.LENGTH_SHORT).show();
+                sessionsManagementViewModel.setOutcome("");
+            }
+        });
+
+        sessionsManagementViewModel.getOutcomeSession().observe(this, isSessionSavedForUsers -> {
+            if (isSessionSavedForUsers) {
+                Toast.makeText(context, getString(R.string.request_sent), Toast.LENGTH_SHORT).show();
+                sessionsManagementViewModel.setOutcomeSession(false);
             }
         });
     }
@@ -228,6 +276,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             case R.id.menu_log_out_option:
                 //Logout
+                UserSingleton.reset();
                 signInSignUpViewModel.signOut();
                 startActivity(new Intent(ProfileActivity.this, SignInSignUpActivity.class));
                 finish();
@@ -238,28 +287,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    /* Show user selected date time in bottom text vew area. */
-    private void showUserSelectDateTime(Dialog dialog) {
-        // Get TextView object which is used to show user pick date and time.
-        TextView textView = (TextView) dialog.findViewById(R.id.textViewShowDateTime);
-
-        String strBuffer = "You selected date time : " +
-                this.year +
-                "-" +
-                (this.month + 1) +
-                "-" +
-                this.day +
-                " " +
-                this.hour +
-                ":" +
-                this.minute +
-                ":" +
-                this.seconds;
-        textView.setText(strBuffer);
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextSize(14);
-    }
-
     private List<String> getSubjectNames(List<Subject> subjects) {
         List<String> res = new ArrayList<>();
 
@@ -268,5 +295,10 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         return res;
+    }
+
+    protected void onSaveInstanceState(@NonNull Bundle mBundle) {
+        super.onSaveInstanceState(mBundle);
+        mBundle.putParcelable("currentUser", Objects.requireNonNull(UserSingleton.getInstance(null).getUser()));
     }
 }

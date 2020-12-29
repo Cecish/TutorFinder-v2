@@ -1,5 +1,6 @@
 package com.app_perso.tutorfinder_v2.ui.user.admin;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -13,12 +14,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.app_perso.tutorfinder_v2.R;
-import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.UserSingleton;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpActivity;
 import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
+
 
 public class AdminHomeActivity extends AppCompatActivity {
     private SignInSignUpViewModel signInSignUpViewModel;
@@ -27,6 +29,10 @@ public class AdminHomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_home);
+
+        if (savedInstanceState != null){
+            UserSingleton.getInstance(savedInstanceState.getParcelable("currentUser"));
+        }
 
         signInSignUpViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(SignInSignUpViewModel.class);
@@ -38,8 +44,6 @@ public class AdminHomeActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-
-        User user = Objects.requireNonNull(getIntent().getExtras()).getParcelable("AuthenticatedUser");
     }
 
     @Override
@@ -52,10 +56,16 @@ public class AdminHomeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_log_out_option) {
             //Logout
+            UserSingleton.reset();
             signInSignUpViewModel.signOut();
             startActivity(new Intent(AdminHomeActivity.this, SignInSignUpActivity.class));
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onSaveInstanceState(@NonNull Bundle mBundle) {
+        super.onSaveInstanceState(mBundle);
+        mBundle.putParcelable("currentUser", Objects.requireNonNull(UserSingleton.getInstance(null).getUser()));
     }
 }
