@@ -77,6 +77,7 @@
     <string name="taught_subjects">Taught subjects</string>
     <string name="search_tutors">Search tutors</string>
     <string name="conversations">Conversations</string>
+    <string name="session_requests">Session requests</string>
     <string name="add_subjects_instructions">You have not selected any subjects yet. To do so, activate the edit mode in the top right corner of the screen</string>
 
     <!-- Error -->

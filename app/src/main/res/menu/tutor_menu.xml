@@ -12,6 +12,11 @@
         android:title="@string/taught_subjects" />
 
     <item
+        android:id="@+id/navigation_sessions"
+        android:icon="@drawable/ic_baseline_calendar_today_24"
+        android:title="@string/session_requests" />
+
+    <item
         android:id="@+id/navigation_chat"
         android:icon="@drawable/ic_baseline_chat_24"
         android:title="@string/conversations" />
