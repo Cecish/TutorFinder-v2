@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alphabetik.Alphabetik;
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
-import com.app_perso.tutorfinder_v2.util.AdminUtils;
+import com.app_perso.tutorfinder_v2.util.ViewFlipperUtils;
 import com.app_perso.tutorfinder_v2.util.AlphabetikUtils;
 import com.app_perso.tutorfinder_v2.util.DialogUtils;
 import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.SubjectAdapter;
@@ -57,9 +57,9 @@ public class SubjectsManagementFragment extends Fragment implements SubjectAdapt
             @Override
             public void onChanged(@Nullable final List<Subject> subjects) {
                 if (Objects.requireNonNull(subjects).size() == 0) {
-                    AdminUtils.configViewFlipper(viewFlipper, fabAddSubject, 0);
+                    ViewFlipperUtils.configViewFlipper(viewFlipper, fabAddSubject, 0);
                 } else {
-                    AdminUtils.configViewFlipper(viewFlipper, fabAddSubject, 1);
+                    ViewFlipperUtils.configViewFlipper(viewFlipper, fabAddSubject, 1);
 
                     //sort subject list
                     Collections.sort(subjects);

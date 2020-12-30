@@ -20,7 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.util.AdminUtils;
+import com.app_perso.tutorfinder_v2.util.ViewFlipperUtils;
 import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.PendingTutorAdapter;
 
 import java.util.List;
@@ -52,9 +52,11 @@ public class TutorsManagementFragment extends Fragment {
             @Override
             public void onChanged(@Nullable final List<User> pendingTutors) {
                 if (pendingTutors.size() == 0) {
-                    AdminUtils.configViewFlipper(viewFlipper, null, 0);
+                    ViewFlipperUtils.configViewFlipper(viewFlipper, null, 0);
+                    ((TextView) viewFlipper.getCurrentView().findViewById(R.id.empty_state)).setText(getString(R.string.no_registration_request));
                 } else {
-                    AdminUtils.configViewFlipper(viewFlipper, null, 1);
+                    ViewFlipperUtils.configViewFlipper(viewFlipper, null, 1);
+                    ((TextView) viewFlipper.getCurrentView().findViewById(R.id.instructions_info)).setText(getString(R.string.registration_request_instructions));
 
                     displayRequestsInfo(pendingTutors, viewFlipper.getCurrentView().findViewById(R.id.nb_requests_tv),
                             recyclerView = viewFlipper.getCurrentView().findViewById(R.id.registration_requests_rv));

@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.ui.user.admin.adapter;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,29 +11,26 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app_perso.tutorfinder_v2.R;
-import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.ui.user.admin.TutorsManagementViewModel;
+import com.app_perso.tutorfinder_v2.repository.model.Session;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.sessions.SessionsManagementViewModel;
 
 import java.util.List;
 
-public class PendingTutorAdapter extends RecyclerView.Adapter<PendingTutorAdapter.ViewHolder> {
+public class PendingSessionAdapter extends RecyclerView.Adapter<PendingSessionAdapter.ViewHolder> {
     private LayoutInflater inflater;
-    Context context;
-    List<User> pendingTutors;
-    TutorsManagementViewModel tutorsManagementViewModel;
+    List<Session> pendingSessions;
+    SessionsManagementViewModel sessionsManagementViewModel;
 
-
-    public PendingTutorAdapter(Context context, List<User> pendingTutors, TutorsManagementViewModel tutorsManagementViewModel) {
+    public PendingSessionAdapter(Context context, List<Session> pendingSessions, SessionsManagementViewModel sessionsManagementViewModel) {
         inflater = LayoutInflater.from(context);
-        this.pendingTutors = pendingTutors;
-        this.context = context;
-        this.tutorsManagementViewModel = tutorsManagementViewModel;
+        this.pendingSessions = pendingSessions;
+        this.sessionsManagementViewModel = sessionsManagementViewModel;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = inflater.inflate(R.layout.custom_pending_tutor_row, viewGroup, false);
+        View view = inflater.inflate(R.layout.custom_pending_session_row, viewGroup, false);
         return new ViewHolder(view);
     }
 
@@ -44,42 +41,41 @@ public class PendingTutorAdapter extends RecyclerView.Adapter<PendingTutorAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        User current = pendingTutors.get(i);
-        viewHolder.username.setText(current.getUsername());
-        viewHolder.emailAddress.setText(current.getEmail());
+        Session current = pendingSessions.get(i);
+        viewHolder.subjectName.setText(current.getSubjectName());
+        viewHolder.sessionDate.setText(current.getDate());
 
         viewHolder.approve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tutorsManagementViewModel.approveTutor(pendingTutors.get(i));
+                sessionsManagementViewModel.approveSession(pendingSessions.get(i));
             }
         });
 
         viewHolder.decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tutorsManagementViewModel.declineTutor(pendingTutors.get(i));
+                sessionsManagementViewModel.declineSession(pendingSessions.get(i));
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return pendingTutors.size();
+        return pendingSessions.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView username;
-        TextView emailAddress;
+        TextView subjectName;
+        TextView sessionDate;
         Button approve;
         Button decline;
-
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            username = (TextView) itemView.findViewById(R.id.subject_name);
-            emailAddress = (TextView) itemView.findViewById(R.id.session_date);
+            subjectName = (TextView) itemView.findViewById(R.id.subject_name);
+            sessionDate = (TextView) itemView.findViewById(R.id.session_date);
             approve = (Button) itemView.findViewById(R.id.approve);
             decline = (Button) itemView.findViewById(R.id.decline);
 

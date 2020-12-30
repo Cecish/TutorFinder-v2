@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import com.app_perso.tutorfinder_v2.repository.model.Session;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.util.StatusSession;
+import com.app_perso.tutorfinder_v2.util.StatusUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -165,6 +167,23 @@ public class DatabaseHelper {
         }
     }
 
+    private Session castToSession(Map<String, Object> map) {
+        try {
+            return new Session(
+                    Objects.requireNonNull(map.get("id")).toString(),
+                    Objects.requireNonNull(map.get("date")).toString(),
+                    Objects.requireNonNull(map.get("subjectName")).toString(),
+                    StatusSession.valueOf(Objects.requireNonNull(map.get("status")).toString()),
+                    Objects.requireNonNull(map.get("studentId")).toString(),
+                    Objects.requireNonNull(map.get("tutorId")).toString()
+                    );
+
+        } catch(Exception e) {
+            Log.d("ERROR", "Map Firebase document data is incorrect");
+            throw e;
+        }
+    }
+
     public void upsertSession(final Session session, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
         DocumentReference uidRef;
 
@@ -185,11 +204,13 @@ public class DatabaseHelper {
                 .addOnFailureListener(failureListener);
     }
 
-    public void addSession(final String subjectName, final String sessionDate, @NonNull final OnSuccessListener successListener,
-                           @NonNull final OnFailureListener failureListener) {
+    public void addSession(final String subjectName, final String sessionDate, String studentId, String tutorId,
+                           @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
         collectionReferenceSesions
                 .whereEqualTo("subjectName", subjectName)
                 .whereEqualTo("date", sessionDate)
+                .whereEqualTo("studentId", studentId)
+                .whereEqualTo("tutorId", tutorId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -198,11 +219,34 @@ public class DatabaseHelper {
 
                             if (task.getResult().size() == 0) {
                                 //Add new subject
-                                upsertSession(new Session(sessionDate, subjectName), successListener, failureListener);
+                                upsertSession(new Session(sessionDate, subjectName, studentId, tutorId),
+                                        successListener, failureListener);
 
                             } else {
                                 successListener.onSuccess("Session at " + sessionDate + " for subject " + subjectName + " is already added");
                             }
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
+    public void getAllPendingSessionsForTutor(String userId, @NonNull final OnSuccessListener successListener,
+                                              @NonNull final OnFailureListener failureListener) {
+        collectionReferenceSesions
+                .whereEqualTo("status", StatusUser.PENDING)
+                .whereEqualTo("tutorId", userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            List<Session> sessions = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                sessions.add(castToSession(document.getData()));
+                            }
+                            successListener.onSuccess(sessions);
                         } else {
                             failureListener.onFailure(Objects.requireNonNull(task.getException()));
                         }

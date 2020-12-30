@@ -5,7 +5,7 @@ import android.widget.ViewFlipper;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class AdminUtils {
+public class ViewFlipperUtils {
 
     public static void configViewFlipper(ViewFlipper viewFlipper, FloatingActionButton fab, int displayedChild) {
         viewFlipper.setVisibility(View.INVISIBLE);

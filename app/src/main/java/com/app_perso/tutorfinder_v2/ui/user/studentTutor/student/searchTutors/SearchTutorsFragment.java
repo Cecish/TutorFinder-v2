@@ -22,13 +22,10 @@ import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.UserSingleton;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementFragment;
 import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
-import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.SubjectAdapter;
 import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.SubjectAdapterCheckBox;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.SearchResultActivity;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.StudentMainActivity;
-import com.app_perso.tutorfinder_v2.util.AdminUtils;
 import com.app_perso.tutorfinder_v2.util.AlphabetikUtils;
 
 import java.io.Serializable;
