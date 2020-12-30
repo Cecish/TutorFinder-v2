@@ -24,8 +24,11 @@ import com.app_perso.tutorfinder_v2.repository.model.Session;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.sessions.SessionsManagementViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.adapter.PendingSessionAdapter;
+import com.app_perso.tutorfinder_v2.util.Role;
+import com.app_perso.tutorfinder_v2.util.StatusSession;
 import com.app_perso.tutorfinder_v2.util.ViewFlipperUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,10 +73,13 @@ public class SessionRequestsFragment extends Fragment {
                     ViewFlipperUtils.configViewFlipper(viewFlipper, null, 1);
                     ((TextView) viewFlipper.getCurrentView().findViewById(R.id.instructions_info)).setText(getString(R.string.sessions_request_instructions));
 
+                    Collections.sort(pendingSessions);
+
                     displayRequestsInfo(pendingSessions, viewFlipper.getCurrentView().findViewById(R.id.nb_requests_tv),
                             recyclerView = viewFlipper.getCurrentView().findViewById(R.id.registration_requests_rv));
                     recyclerView.setLayoutManager(layoutManager);
-                    recyclerView.setAdapter(new PendingSessionAdapter(requireContext(), pendingSessions, sessionsManagementViewModel));
+                    recyclerView.setAdapter(new PendingSessionAdapter(requireContext(), pendingSessions,
+                            sessionsManagementViewModel, getViewLifecycleOwner()));
 
                     if (recyclerView.getItemDecorationCount() == 0) {
                         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -98,7 +104,7 @@ public class SessionRequestsFragment extends Fragment {
             }
         };
 
-        sessionsManagementViewModel.getAllPendingSessionsForTutor(user.getId());
+        sessionsManagementViewModel.getAllSessionsForUser(user.getId(), Role.TUTOR, StatusSession.PENDING);
         sessionsManagementViewModel.getPendingSessions().observe(getViewLifecycleOwner(), pendingSessionsObserver);
 
         sessionsManagementViewModel.getRefresh().observe(getViewLifecycleOwner(), refreshObserver);
@@ -109,12 +115,21 @@ public class SessionRequestsFragment extends Fragment {
             @Override
             public void onRefresh() {
                 sessionsManagementViewModel.setRefresh(true);
-                sessionsManagementViewModel.getAllPendingSessionsForTutor(user.getId());
+                sessionsManagementViewModel.getAllSessionsForUser(user.getId(), Role.TUTOR, StatusSession.PENDING);
             }
         });
     }
 
     private void displayRequestsInfo(List<Session> sessions, TextView nbSessionsTv, RecyclerView sessionsRv) {
         nbSessionsTv.setText(getString(R.string.registration_requests_nb, sessions.size()));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        sessionsManagementViewModel.getPendingSessions().removeObserver(pendingSessionsObserver);
+        sessionsManagementViewModel.getRefresh().removeObserver(refreshObserver);
+        sessionsManagementViewModel.getOutcome().removeObserver(outcomeObserver);
     }
 }

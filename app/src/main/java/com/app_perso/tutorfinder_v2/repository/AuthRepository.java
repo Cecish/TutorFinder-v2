@@ -9,6 +9,7 @@ import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.StatusUser;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
+import com.app_perso.tutorfinder_v2.util.UserUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -243,7 +244,7 @@ public class AuthRepository {
                         if (task.isSuccessful() && task.getResult() != null) {
                             List<User> users = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                users.add(castToUser(document.getData()));
+                                users.add(UserUtils.castToUser(document.getData()));
                             }
                             successListener.onSuccess(users);
                         } else {
@@ -251,60 +252,6 @@ public class AuthRepository {
                         }
                     }
                 });
-    }
-
-    private User castToUser(Map<String, Object> map) {
-        try {
-            User user;
-
-            if (map.get("subjects") == null && map.get("sessions") == null) {
-                user = new User(
-                        Objects.requireNonNull(map.get("id")).toString(),
-                        Objects.requireNonNull(map.get("username")).toString(),
-                        Objects.requireNonNull(map.get("email")).toString(),
-                        Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
-                        StatusUser.valueOf(Objects.requireNonNull(map.get("status")).toString()),
-                        new ArrayList<>(),
-                        new ArrayList<>()
-                );
-            } else  if (map.get("subjects") != null && map.get("sessions") == null) {
-                user = new User(
-                        Objects.requireNonNull(map.get("id")).toString(),
-                        Objects.requireNonNull(map.get("username")).toString(),
-                        Objects.requireNonNull(map.get("email")).toString(),
-                        Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
-                        StatusUser.valueOf(Objects.requireNonNull(map.get("status")).toString()),
-                        (List<String>) Objects.requireNonNull(map.get("subjects")),
-                        new ArrayList<>()
-                );
-            } else  if (map.get("subjects") == null && map.get("sessions") != null) {
-                user = new User(
-                        Objects.requireNonNull(map.get("id")).toString(),
-                        Objects.requireNonNull(map.get("username")).toString(),
-                        Objects.requireNonNull(map.get("email")).toString(),
-                        Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
-                        StatusUser.valueOf(Objects.requireNonNull(map.get("status")).toString()),
-                        new ArrayList<>(),
-                        (List<String>) Objects.requireNonNull(map.get("sessions"))
-                );
-            } else {
-                user = new User(
-                        Objects.requireNonNull(map.get("id")).toString(),
-                        Objects.requireNonNull(map.get("username")).toString(),
-                        Objects.requireNonNull(map.get("email")).toString(),
-                        Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
-                        StatusUser.valueOf(Objects.requireNonNull(map.get("status")).toString()),
-                        (List<String>) Objects.requireNonNull(map.get("subjects")),
-                        (List<String>) Objects.requireNonNull(map.get("sessions"))
-                );
-            }
-
-            return user;
-
-        } catch(Exception e) {
-            Log.d("ERROR", "Map Firebase document data is incorrect");
-            throw e;
-        }
     }
 
     public void getTutorsMatchingSubjects(List<String> subjectIds, @NonNull final OnSuccessListener successListener,
@@ -317,10 +264,10 @@ public class AuthRepository {
                         if (task.isSuccessful() && task.getResult() != null) {
                             List<User> tutors = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                User user = castToUser(document.getData());
+                                User user = UserUtils.castToUser(document.getData());
                                 if (user.getRole() == Role.TUTOR && !ArrayUtils.isNullOrEmpty(user.getSubjectIds()) &&
                                         ArrayUtils.intersectionListStr(subjectIds, user.getSubjectIds()).size() > 0) {
-                                    tutors.add(castToUser(document.getData()));
+                                    tutors.add(UserUtils.castToUser(document.getData()));
                                 }
                             }
                             successListener.onSuccess(tutors);
