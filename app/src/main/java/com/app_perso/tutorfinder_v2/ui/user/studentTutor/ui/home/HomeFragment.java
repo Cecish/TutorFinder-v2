@@ -44,6 +44,7 @@ import com.app_perso.tutorfinder_v2.util.StatusSession;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -105,6 +106,8 @@ public class HomeFragment extends Fragment {
                     } else {
                         viewFlipper.setDisplayedChild(1);
                         recyclerView = viewFlipper.getCurrentView().findViewById(R.id.upcomingSessions);
+
+                        Collections.sort(upcomingApprovedSessions);
 
                         recyclerView.setLayoutManager(layoutManager);
                         recyclerView.setAdapter(new SessionAdapter(requireContext(), upcomingApprovedSessions,

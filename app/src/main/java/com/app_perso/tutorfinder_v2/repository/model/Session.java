@@ -10,7 +10,7 @@ import com.app_perso.tutorfinder_v2.util.StatusSession;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Session implements Parcelable {
+public class Session implements Parcelable, Comparable<Session> {
     private String id;
     private String date;
     private String subjectName;
@@ -138,4 +138,18 @@ public class Session implements Parcelable {
             return new User[size];
         }
     };
+
+    @Override
+    public int compareTo(Session otherSession) {
+
+        if (Long.parseLong(this.date) < Long.parseLong(otherSession.date)) {
+            return -1;
+
+        } else if (Long.parseLong(this.date) > Long.parseLong(otherSession.date)) {
+            return 1;
+
+        } else {
+            return this.subjectName.compareTo(otherSession.subjectName);
+        }
+    }
 }

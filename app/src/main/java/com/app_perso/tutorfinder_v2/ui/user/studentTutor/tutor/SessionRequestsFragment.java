@@ -28,6 +28,7 @@ import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.StatusSession;
 import com.app_perso.tutorfinder_v2.util.ViewFlipperUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -71,6 +72,8 @@ public class SessionRequestsFragment extends Fragment {
                 } else {
                     ViewFlipperUtils.configViewFlipper(viewFlipper, null, 1);
                     ((TextView) viewFlipper.getCurrentView().findViewById(R.id.instructions_info)).setText(getString(R.string.sessions_request_instructions));
+
+                    Collections.sort(pendingSessions);
 
                     displayRequestsInfo(pendingSessions, viewFlipper.getCurrentView().findViewById(R.id.nb_requests_tv),
                             recyclerView = viewFlipper.getCurrentView().findViewById(R.id.registration_requests_rv));
