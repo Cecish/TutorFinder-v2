@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.app_perso.tutorfinder_v2.util.ArrayUtils;
 import com.app_perso.tutorfinder_v2.util.Role;
-import com.app_perso.tutorfinder_v2.util.Status;
+import com.app_perso.tutorfinder_v2.util.StatusUser;
 import com.app_perso.tutorfinder_v2.util.StringUtils;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -22,7 +22,7 @@ public class User implements Parcelable, Comparable<User> {
     private String email;
     private String password;
     private Role role;
-    private Status status; // for tutors
+    private StatusUser status; // for tutors
     private List<String> subjectIds;
     private List<String> sessionIds;
 
@@ -48,7 +48,7 @@ public class User implements Parcelable, Comparable<User> {
     }
 
     //Only used to retrieve a user from a Firestore document
-    public User(String id, String username, String email, Role role, Status status, List<String> subjectIds, List<String> sessionIds) {
+    public User(String id, String username, String email, Role role, StatusUser status, List<String> subjectIds, List<String> sessionIds) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -78,7 +78,7 @@ public class User implements Parcelable, Comparable<User> {
         return this.role;
     }
 
-    public Status getStatus() {
+    public StatusUser getStatus() {
         return this.status;
     }
 
@@ -114,7 +114,7 @@ public class User implements Parcelable, Comparable<User> {
         this.role = role;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(StatusUser status) {
         this.status = status;
     }
 
@@ -173,7 +173,7 @@ public class User implements Parcelable, Comparable<User> {
         this.email = data[2];
         this.password = data[3];
         this.role = Role.valueOf(data[4]);
-        this.status = Status.valueOf(data[5]);
+        this.status = StatusUser.valueOf(data[5]);
         this.subjectIds = StringUtils.stringToList(data[6]);
         this.sessionIds = StringUtils.stringToList(data[7]);
     }

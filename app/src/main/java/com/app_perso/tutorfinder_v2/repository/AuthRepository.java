@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.app_perso.tutorfinder_v2.util.ArrayUtils;
 import com.app_perso.tutorfinder_v2.util.Role;
-import com.app_perso.tutorfinder_v2.util.Status;
+import com.app_perso.tutorfinder_v2.util.StatusUser;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.util.SignInSignUpUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,9 +54,9 @@ public class AuthRepository {
                                                 createdUser.setRole(user.getRole());
 
                                                 if (user.getRole().equals(Role.TUTOR)) {
-                                                    createdUser.setStatus(Status.NOT_VERIFIED);
+                                                    createdUser.setStatus(StatusUser.NOT_VERIFIED);
                                                 } else {
-                                                    createdUser.setStatus(Status.NOT_APPLICABLE);
+                                                    createdUser.setStatus(StatusUser.NOT_APPLICABLE);
                                                     createdUser.setSubjectIds(new ArrayList<>());
                                                 }
 
@@ -164,7 +164,7 @@ public class AuthRepository {
                     Map<String, Object> userInfoInDb = (Map<String, Object>) o;
                     signedInUser.setUsername((String) userInfoInDb.get("username"));
                     signedInUser.setRole(Role.valueOf((String) userInfoInDb.get("role")));
-                    signedInUser.setStatus(Status.valueOf((String) userInfoInDb.get("status")));
+                    signedInUser.setStatus(StatusUser.valueOf((String) userInfoInDb.get("status")));
 
                     if (userInfoInDb.get("subjects") == null || (userInfoInDb.get("subjects") != null &&
                             Objects.requireNonNull(userInfoInDb.get("subjects")).toString().equals("[]"))) {
@@ -177,15 +177,15 @@ public class AuthRepository {
 
                     //User can sign in if email is verified or he/she is the admin
                     if (Objects.requireNonNull(firebaseUser).isEmailVerified() || signedInUser.getRole().equals(Role.ADMIN)) {
-                        if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(Status.NOT_VERIFIED)) {
-                            signedInUser.setStatus(Status.PENDING);
+                        if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(StatusUser.NOT_VERIFIED)) {
+                            signedInUser.setStatus(StatusUser.PENDING);
                             collectionReference.document(signedInUser.getId()).update(signedInUser.genUserForDb());
                         }
 
                         //check if tutor has been accepted
-                        if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(Status.PENDING)){
+                        if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(StatusUser.PENDING)){
                             failureListener.onFailure(new InstantiationException("Your tutor registration request is still pending"));
-                        } else if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(Status.DECLINED)) {
+                        } else if (signedInUser.getRole().equals(Role.TUTOR) && signedInUser.getStatus().equals(StatusUser.DECLINED)) {
                             failureListener.onFailure(new InstantiationException("Your tutor registration request has been declined"));
                         } else {
                             successListener.onSuccess(signedInUser);
@@ -235,7 +235,7 @@ public class AuthRepository {
 
     public void getAllPendingTutors(@NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
         collectionReference
-                .whereEqualTo("status", Status.PENDING)
+                .whereEqualTo("status", StatusUser.PENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -263,7 +263,7 @@ public class AuthRepository {
                         Objects.requireNonNull(map.get("username")).toString(),
                         Objects.requireNonNull(map.get("email")).toString(),
                         Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
-                        Status.valueOf(Objects.requireNonNull(map.get("status")).toString()),
+                        StatusUser.valueOf(Objects.requireNonNull(map.get("status")).toString()),
                         new ArrayList<>(),
                         new ArrayList<>()
                 );
@@ -273,7 +273,7 @@ public class AuthRepository {
                         Objects.requireNonNull(map.get("username")).toString(),
                         Objects.requireNonNull(map.get("email")).toString(),
                         Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
-                        Status.valueOf(Objects.requireNonNull(map.get("status")).toString()),
+                        StatusUser.valueOf(Objects.requireNonNull(map.get("status")).toString()),
                         (List<String>) Objects.requireNonNull(map.get("subjects")),
                         new ArrayList<>()
                 );
@@ -283,7 +283,7 @@ public class AuthRepository {
                         Objects.requireNonNull(map.get("username")).toString(),
                         Objects.requireNonNull(map.get("email")).toString(),
                         Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
-                        Status.valueOf(Objects.requireNonNull(map.get("status")).toString()),
+                        StatusUser.valueOf(Objects.requireNonNull(map.get("status")).toString()),
                         new ArrayList<>(),
                         (List<String>) Objects.requireNonNull(map.get("sessions"))
                 );
@@ -293,7 +293,7 @@ public class AuthRepository {
                         Objects.requireNonNull(map.get("username")).toString(),
                         Objects.requireNonNull(map.get("email")).toString(),
                         Role.valueOf(Objects.requireNonNull(map.get("role")).toString()),
-                        Status.valueOf(Objects.requireNonNull(map.get("status")).toString()),
+                        StatusUser.valueOf(Objects.requireNonNull(map.get("status")).toString()),
                         (List<String>) Objects.requireNonNull(map.get("subjects")),
                         (List<String>) Objects.requireNonNull(map.get("sessions"))
                 );

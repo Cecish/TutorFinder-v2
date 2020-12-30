@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel;
 import com.app_perso.tutorfinder_v2.repository.AuthRepository;
 import com.app_perso.tutorfinder_v2.repository.DatabaseHelper;
 import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.util.Status;
+import com.app_perso.tutorfinder_v2.util.StatusUser;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -33,13 +33,13 @@ public class TutorsManagementViewModel extends ViewModel {
     }
 
     public void approveTutor(User user) {
-        user.setStatus(Status.ACCEPTED);
+        user.setStatus(StatusUser.ACCEPTED);
         databaseHelper.upsertUser(user, tutorSuccess, tutorFailure);
         getAllPendingRequests();
     }
 
     public void declineTutor(User user) {
-        user.setStatus(Status.DECLINED);
+        user.setStatus(StatusUser.DECLINED);
         databaseHelper.upsertUser(user, tutorSuccess, tutorFailure);
         getAllPendingRequests();
     }
