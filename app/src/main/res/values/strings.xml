@@ -68,6 +68,10 @@
     <string name="subject_of_interest">The subject you are interested in:</string>
     <string name="cancel">Cancel</string>
     <string name="request_sent">Your request has been sent</string>
+    <string name="no_pending_sessions">You have no pending sessions to review</string>
+    <string name="subject_label">Subject:</string>
+    <string name="at_label">At:</string>
+    <string name="sessions_request_instructions">Only the not already reviewed session requests are listed here. Once reviewed, requests are no longer displayed below</string>
 
     <!-- Menu options -->
     <string name="log_out">Log out</string>
@@ -77,6 +81,7 @@
     <string name="taught_subjects">Taught subjects</string>
     <string name="search_tutors">Search tutors</string>
     <string name="conversations">Conversations</string>
+    <string name="session_requests">Session requests</string>
     <string name="add_subjects_instructions">You have not selected any subjects yet. To do so, activate the edit mode in the top right corner of the screen</string>
 
     <!-- Error -->

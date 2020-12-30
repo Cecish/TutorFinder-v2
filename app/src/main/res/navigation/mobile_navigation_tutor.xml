@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_learning_needs" />
 
     <fragment
+        android:id="@+id/navigation_sessions"
+        android:name="com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.SessionRequestsFragment"
+        android:label="@string/session_requests"
+        tools:layout="@layout/fragment_session_requests" />
+
+    <fragment
         android:id="@+id/navigation_chat"
         android:name="com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.chat.ChatFragment"
         android:label="@string/conversations"
