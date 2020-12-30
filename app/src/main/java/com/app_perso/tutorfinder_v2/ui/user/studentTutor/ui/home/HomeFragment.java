@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,16 +27,24 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.UserSingleton;
+import com.app_perso.tutorfinder_v2.repository.model.Session;
 import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.sessions.SessionsManagementViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.StudentMainActivity;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.adapter.SessionAdapter;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.TutorMainActivity;
 import com.app_perso.tutorfinder_v2.util.FirestoreUtils;
+import com.app_perso.tutorfinder_v2.util.StatusSession;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -43,9 +52,12 @@ import static com.app_perso.tutorfinder_v2.util.FirestoreUtils.RESULT_LOAD_IMAGE
 
 public class HomeFragment extends Fragment {
     private HomeViewModel homeViewModel;
+    private SessionsManagementViewModel sessionsManagementViewModel;
     private ImageView profilePic;
     private User user;
+    private RecyclerView recyclerView;
     private Observer<Boolean> refreshProfilePicObserver = null;
+    private Observer<List<Session>> upcomingApprovedSessionsObserver = null;
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,11 +67,14 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        final ViewFlipper viewFlipper = view.findViewById(R.id.viewFlipper_sessions);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         TextView usernameTv = (TextView) view.findViewById(R.id.username);
         profilePic = (ImageView) view.findViewById(R.id.profile_pic);
         ImageView editProfilePic = (ImageView) view.findViewById(R.id.edit_profile_pic);
 
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        sessionsManagementViewModel = ViewModelProviders.of(this).get(SessionsManagementViewModel.class);
 
         if (getActivity() instanceof StudentMainActivity) {
             user = Objects.requireNonNull(UserSingleton.getInstance(null).getUser());
@@ -75,6 +90,38 @@ public class HomeFragment extends Fragment {
                 FirestoreUtils.loadProfilePicture(profilePic, user.getId(), getContext());
             }
         };
+
+        upcomingApprovedSessionsObserver = new Observer<List<Session>>() {
+            @Override
+            public void onChanged(@Nullable final List<Session> approvedSessions) {
+                if (approvedSessions == null || approvedSessions.size() == 0) {
+                    viewFlipper.setDisplayedChild(0);
+                } else {
+                    List<Session> upcomingApprovedSessions = sessionsManagementViewModel.getUpcomingApprovedSessions(approvedSessions);
+
+                    if (upcomingApprovedSessions == null || upcomingApprovedSessions.size() == 0) {
+                        viewFlipper.setDisplayedChild(0);
+
+                    } else {
+                        viewFlipper.setDisplayedChild(1);
+                        recyclerView = viewFlipper.getCurrentView().findViewById(R.id.upcomingSessions);
+
+                        recyclerView.setLayoutManager(layoutManager);
+                        recyclerView.setAdapter(new SessionAdapter(requireContext(), upcomingApprovedSessions,
+                                sessionsManagementViewModel, getViewLifecycleOwner()));
+
+                        if (recyclerView.getItemDecorationCount() == 0) {
+                            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                                    layoutManager.getOrientation());
+                            recyclerView.addItemDecoration(dividerItemDecoration);
+                        }
+                    }
+                }
+            }
+        };
+
+        sessionsManagementViewModel.getAllSessionsForUser(user.getId(), user.getRole(), StatusSession.ACCEPTED);
+        sessionsManagementViewModel.getPendingSessions().observe(getViewLifecycleOwner(), upcomingApprovedSessionsObserver);
 
         //Populate profile info
         usernameTv.setText(user.getUsername());
@@ -197,5 +244,6 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
 
         homeViewModel.getRefreshProfilePic().removeObserver(refreshProfilePicObserver);
+        sessionsManagementViewModel.getPendingSessions().removeObserver(upcomingApprovedSessionsObserver);
     }
 }

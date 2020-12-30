@@ -46,7 +46,7 @@
     <string name="tutor_avatar">Tutor avatar</string>
     <string name="approve">Approve</string>
     <string name="decline">Decline</string>
-    <string name="upcoming_sessions">Your upcoming sessions (up to 30):</string>
+    <string name="upcoming_sessions">Your upcoming sessions:</string>
     <string name="profile_picture">Profile picture</string>
     <string name="edit_profile_picture">Edit profile picture</string>
     <string name="my_learning_needs">My learning needs: </string>
@@ -72,7 +72,8 @@
     <string name="subject_label">Subject:</string>
     <string name="at_label">At:</string>
     <string name="sessions_request_instructions">Only the not already reviewed session requests are listed here. Once reviewed, requests are no longer displayed below</string>
-
+    <string name="no_upcoming_sessions">You have currently no upcoming sessions.</string>
+    <string name="studentInfo">Student: %1$s (email: %2$s)</string>
     <!-- Menu options -->
     <string name="log_out">Log out</string>
     <string name="title_activity_home">MainActivity</string>

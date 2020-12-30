@@ -38,7 +38,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/approve"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/subjectLabel"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,13 +47,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="2"
         app:layout_constraintBottom_toBottomOf="@+id/dateSessionLabel"
-        app:layout_constraintEnd_toStartOf="@+id/approve"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/subjectLabel"
-        app:layout_constraintTop_toTopOf="@+id/dateSessionLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/subject_name" />
 
     <TextView
         android:id="@+id/student_info"
@@ -62,33 +63,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateSessionLabel" />
-
-    <Button
-        android:id="@+id/approve"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/height_30dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/blue_button_background"
-        android:text="@string/approve"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/decline"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/height_30dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/red_button_background"
-        android:text="@string/decline"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/student_info"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/approve" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

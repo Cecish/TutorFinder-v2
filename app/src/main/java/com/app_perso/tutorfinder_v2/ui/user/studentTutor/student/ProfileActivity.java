@@ -232,7 +232,7 @@ public class ProfileActivity extends AppCompatActivity {
                         cal.set(Calendar.SECOND, 0);
                         cal.set(Calendar.MILLISECOND, 0);
                         sessionsManagementViewModel.addSession(dropdownSubjects.getSelectedItem().toString(),
-                                cal.getTime().toString(), currentUser.getId(), tutor.getId());
+                                String.valueOf(cal.getTime().getTime()), currentUser.getId(), tutor.getId());
                         sessionsManagementViewModel.getAddedSession().observe(lifecycleOwner, addedSessionObserver);
                         dialog.dismiss();
                     }

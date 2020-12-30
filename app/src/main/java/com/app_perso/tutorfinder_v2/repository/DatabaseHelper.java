@@ -7,8 +7,9 @@ import androidx.annotation.NonNull;
 import com.app_perso.tutorfinder_v2.repository.model.Session;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.StatusSession;
-import com.app_perso.tutorfinder_v2.util.StatusUser;
+import com.app_perso.tutorfinder_v2.util.UserUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -232,11 +233,26 @@ public class DatabaseHelper {
                 });
     }
 
-    public void getAllPendingSessionsForTutor(String userId, @NonNull final OnSuccessListener successListener,
-                                              @NonNull final OnFailureListener failureListener) {
+    public void getAllSessionsForUser(String userId, Role roleUser, StatusSession statusSession, @NonNull final OnSuccessListener successListener,
+                                      @NonNull final OnFailureListener failureListener) {
+        String fieldName = "";
+
+        switch (roleUser) {
+            case STUDENT:
+            fieldName = "studentId";
+            break;
+
+            case TUTOR:
+            fieldName = "tutorId";
+            break;
+
+            default:
+                throw new IllegalArgumentException("Role " + roleUser.name() + " is not permitted here");
+        }
+
         collectionReferenceSesions
-                .whereEqualTo("status", StatusUser.PENDING)
-                .whereEqualTo("tutorId", userId)
+                .whereEqualTo("status", statusSession.name())
+                .whereEqualTo(fieldName, userId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -247,6 +263,27 @@ public class DatabaseHelper {
                                 sessions.add(castToSession(document.getData()));
                             }
                             successListener.onSuccess(sessions);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
+    public void getUserFromId(String userId, @NonNull final OnSuccessListener successListener,
+                                       @NonNull final OnFailureListener failureListener) {
+        collectionReferenceUsers
+                .whereEqualTo("id", userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            List<User> users = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                users.add(UserUtils.castToUser(document.getData()));
+                            }
+                            successListener.onSuccess(users.get(0));
                         } else {
                             failureListener.onFailure(Objects.requireNonNull(task.getException()));
                         }

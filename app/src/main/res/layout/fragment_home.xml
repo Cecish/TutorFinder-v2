@@ -71,10 +71,29 @@
         android:textSize="14sp"
         android:textStyle="bold" />
 
+    <ViewFlipper
+        android:id="@+id/viewFlipper_sessions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:textSize="14sp"
+            android:text="@string/no_upcoming_sessions"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/upcomingSessions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="14dp"
         android:paddingBottom="16dp"
         android:background="@color/white"/>
+
+    </ViewFlipper>
+
 </LinearLayout>

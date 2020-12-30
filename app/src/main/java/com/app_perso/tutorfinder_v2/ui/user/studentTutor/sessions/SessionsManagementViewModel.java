@@ -12,10 +12,14 @@ import com.app_perso.tutorfinder_v2.repository.DatabaseHelper;
 import com.app_perso.tutorfinder_v2.repository.model.Session;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
+import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.StatusSession;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class SessionsManagementViewModel extends ViewModel {
@@ -26,6 +30,7 @@ public class SessionsManagementViewModel extends ViewModel {
     private MutableLiveData<Session> addedSessionLiveData = new MutableLiveData<>();
     public MutableLiveData<List<Session>> pendingSessions = new MutableLiveData<>();
     public MutableLiveData<Boolean> refresh = new MutableLiveData<>(false);
+    private MutableLiveData<User> userSession = new MutableLiveData<>();
 
     public SessionsManagementViewModel() {
         databaseHelper = new DatabaseHelper();
@@ -104,6 +109,20 @@ public class SessionsManagementViewModel extends ViewModel {
         return pendingSessions;
     }
 
+    public List<Session> getUpcomingApprovedSessions(List<Session> approvedSessions) {
+        List<Session> res = new ArrayList<>();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+
+        for (Session session: approvedSessions) {
+            if (cal.getTime().getTime() <= Long.parseLong(session.getDate())) {
+                res.add(session);
+            }
+        }
+
+        return res;
+    }
+
     public MutableLiveData<Session> getAddedSession() {
         return addedSessionLiveData;
     }
@@ -112,16 +131,24 @@ public class SessionsManagementViewModel extends ViewModel {
         this.addedSessionLiveData.setValue(addedSession);
     }
 
+    public void getUserFromId(String userId) {
+        databaseHelper.getUserFromId(userId, getUserSessionSuccess, getUserSessionFailure);
+    }
+
+    public MutableLiveData<User> getUserSession() {
+        return this.userSession;
+    }
+
     public void approveSession(Session session) {
         session.setStatus(StatusSession.ACCEPTED);
         databaseHelper.upsertSession(session, sessionsSuccess, sessionFailure);
-        getAllPendingSessionsForTutor(session.getTutorId());
+        getAllSessionsForUser(session.getTutorId(), Role.TUTOR, StatusSession.PENDING);
     }
 
     public void declineSession(Session session) {
         session.setStatus(StatusSession.DECLINED);
         databaseHelper.upsertSession(session, sessionsSuccess, sessionFailure);
-        getAllPendingSessionsForTutor(session.getTutorId());
+        getAllSessionsForUser(session.getTutorId(), Role.TUTOR, StatusSession.PENDING);
     }
 
     private OnSuccessListener sessionsSuccess = new OnSuccessListener() {
@@ -139,8 +166,24 @@ public class SessionsManagementViewModel extends ViewModel {
         }
     };
 
-    public void getAllPendingSessionsForTutor(String userId) {
-        databaseHelper.getAllPendingSessionsForTutor(userId, pendingSessionsSuccess, pendingSessionsFailure);
+    private OnSuccessListener getUserSessionSuccess = new OnSuccessListener() {
+        @Override
+        public void onSuccess(Object o) {
+            Log.d("TUTOR FINDER DEBUG", "User successfully retrieved");
+            userSession.setValue((User) o);
+        }
+    };
+
+    private OnFailureListener getUserSessionFailure = new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+            setOutcome("Oops. An error occurred.");
+            e.printStackTrace();
+        }
+    };
+
+    public void getAllSessionsForUser(String userId, Role roleUser, StatusSession statusSession) {
+        databaseHelper.getAllSessionsForUser(userId, roleUser, statusSession, pendingSessionsSuccess, pendingSessionsFailure);
     }
 
     private OnSuccessListener pendingSessionsSuccess = new OnSuccessListener() {
