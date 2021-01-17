@@ -74,6 +74,14 @@
     <string name="sessions_request_instructions">Only the not already reviewed session requests are listed here. Once reviewed, requests are no longer displayed below</string>
     <string name="no_upcoming_sessions">You have currently no upcoming sessions.</string>
     <string name="studentInfo">Student: %1$s (email: %2$s)</string>
+
+    <!-- Chat -->
+    <string name="send">Send</string>
+    <string name="input">Input</string>
+    <string name="chat_with">Chat with %1$s</string>
+    <string name="no_conversation_instructions">You have no available conversations yet. Find a tutor to start a conversation</string>
+    <string name="chat_user_selection">Select the user with whom you want chat</string>
+
     <!-- Menu options -->
     <string name="log_out">Log out</string>
     <string name="title_activity_home">MainActivity</string>

@@ -3,6 +3,7 @@
     package="com.app_perso.tutorfinder_v2">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,7 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_tutor_finder_v2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.user.studentTutor.student.ProfileActivity"
+        <activity android:name=".ui.user.studentTutor.ui.chat.ChatActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.user.studentTutor.student.ProfileActivity"
             android:label="@string/selected_tutor_profile"
             android:screenOrientation="portrait" />
         <activity
