@@ -127,6 +127,23 @@ public class DatabaseHelper {
                 });
     }
 
+    public void deleteSubject(String subjectId) {
+        collectionReferenceSubjects.document(subjectId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("TUTOR-FINDER", "Subject " + subjectId + " has been successfully deleted");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("TUTOR-FINDER", "An error occurred when attempting to delete subject " + subjectId);
+                    }
+                });
+    }
+
     public void getAllSubjects(@NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
         collectionReferenceSubjects
                 .get()

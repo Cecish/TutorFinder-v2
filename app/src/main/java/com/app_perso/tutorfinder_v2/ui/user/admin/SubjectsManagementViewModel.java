@@ -36,6 +36,10 @@ public class SubjectsManagementViewModel extends ViewModel {
         databaseHelper.updateSubject(subject, updateSubjectSuccess, updateSubjectFailure);
     }
 
+    public void deleteSubject(String subjectId) {
+        databaseHelper.deleteSubject(subjectId);
+    }
+
     private OnSuccessListener subjectsSuccess = new OnSuccessListener() {
         @Override
         public void onSuccess(Object o) {
@@ -88,6 +92,10 @@ public class SubjectsManagementViewModel extends ViewModel {
 
     public MutableLiveData<List<Subject>> getSubjects() {
         return subjects;
+    }
+
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects.setValue(subjects);
     }
 
     private void addSubjectLiveData(Subject subject) {

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -85,6 +86,28 @@ public class SubjectsManagementFragment extends Fragment implements SubjectAdapt
                                 layoutManager.getOrientation());
                         recyclerView.addItemDecoration(dividerItemDecoration);
                     }
+
+                    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.DOWN | ItemTouchHelper.UP) {
+
+                        @Override
+                        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                            return false;
+                        }
+
+                        @Override
+                        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                            //Remove swiped item from list and notify the RecyclerView
+                            int position = viewHolder.getAdapterPosition();
+                            subjectsManagementViewModel.deleteSubject(subjects.get(position).getId());
+
+                            subjects.remove(position);
+                            subjectAdapter.notifyDataSetChanged();
+                            subjectsManagementViewModel.setSubjects(subjects);
+                        }
+                    };
+
+                    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+                    itemTouchHelper.attachToRecyclerView(recyclerView);
                 }
             }
         };
