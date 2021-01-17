@@ -49,4 +49,18 @@ public class StringUtils {
 
         return res;
     }
+
+    public static String getOtherId(String fromTo, String id) {
+        String res;
+
+        String[] idParts = fromTo.split("_");
+
+        if (idParts[0].equals(id)) {
+            res = idParts[1];
+        } else {
+            res = idParts[0];
+        }
+
+        return res;
+    }
 }

@@ -16,9 +16,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,9 +29,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class DatabaseHelper {
     private final String COLLECTION_USERS = "tutor_finder_users";
@@ -37,7 +43,7 @@ public class DatabaseHelper {
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private CollectionReference collectionReferenceUsers = firebaseFirestore.collection(COLLECTION_USERS);
     private CollectionReference collectionReferenceSubjects = firebaseFirestore.collection(COLLECTION_SUBJECTS);
-    private CollectionReference collectionReferenceSesions = firebaseFirestore.collection(COLLECTION_SESSIONS);
+    private CollectionReference collectionReferenceSessions = firebaseFirestore.collection(COLLECTION_SESSIONS);
     private DatabaseReference realtimeDbReference = FirebaseDatabase.getInstance().getReference();
 
     //if the entity is present in the database update the record, else create new record
@@ -195,10 +201,10 @@ public class DatabaseHelper {
         DocumentReference uidRef;
 
         if (session.getId() == null) {
-            uidRef = collectionReferenceSesions.document();
+            uidRef = collectionReferenceSessions.document();
             session.setId(uidRef.getId());
         } else {
-            uidRef = collectionReferenceSesions.document(session.getId());
+            uidRef = collectionReferenceSessions.document(session.getId());
         }
 
         uidRef.set(session.genSessionForDb())
@@ -213,7 +219,7 @@ public class DatabaseHelper {
 
     public void addSession(final String subjectName, final String sessionDate, String studentId, String tutorId,
                            @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
-        collectionReferenceSesions
+        collectionReferenceSessions
                 .whereEqualTo("subjectName", subjectName)
                 .whereEqualTo("date", sessionDate)
                 .whereEqualTo("studentId", studentId)
@@ -256,7 +262,7 @@ public class DatabaseHelper {
                 throw new IllegalArgumentException("Role " + roleUser.name() + " is not permitted here");
         }
 
-        collectionReferenceSesions
+        collectionReferenceSessions
                 .whereEqualTo("status", statusSession.name())
                 .whereEqualTo(fieldName, userId)
                 .get()
@@ -297,6 +303,31 @@ public class DatabaseHelper {
                 });
     }
 
+    public void getUsersFromIds(List<String> userIds, @NonNull final OnSuccessListener successListener,
+                              @NonNull final OnFailureListener failureListener) {
+        collectionReferenceUsers
+                .whereIn("id", userIds)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            List<User> users = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                users.add(UserUtils.castToUser(document.getData()));
+                            }
+
+                            //Sort by alphabetical order
+                            Collections.sort(users);
+
+                            successListener.onSuccess(users);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
     public void pushMessageInRealtimeDb(ChatMessage chatMessage) {
         realtimeDbReference
                 .push()
@@ -306,5 +337,76 @@ public class DatabaseHelper {
     public Query getChatMessagesBetween2Ids(String senderId, String targetId) {
         return realtimeDbReference.orderByChild("fromTo")
                 .equalTo(StringUtils.appendStringsAlphabetically(senderId, targetId));
+    }
+
+    public void getMessagesInvolvingId(String userId, @NonNull final OnSuccessListener successListener,
+                              @NonNull final OnFailureListener failureListener) {
+        realtimeDbReference
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Set<String> usersId = new HashSet<>();
+                            for (DataSnapshot document : dataSnapshot.getChildren()) {
+                                ChatMessage message = document.getValue(ChatMessage.class);
+                                assert message != null;
+                                if (message.getFromTo().contains(userId)) {
+                                    usersId.add(StringUtils.getOtherId(message.getFromTo(), userId));
+                                }
+                            }
+                            successListener.onSuccess(usersId);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        failureListener.onFailure(Objects.requireNonNull(error.toException()));
+                    }
+                });
+    }
+
+    public void getAllMyTutorsOrStudentsIds(String userId, String fieldName, Role userRole, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
+        collectionReferenceSessions
+                .whereEqualTo("status", StatusSession.ACCEPTED.name())
+                .whereEqualTo(fieldName, userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            Set<String> userIds = new HashSet<>();
+
+                            if (userRole == Role.STUDENT) {
+                                userIds = getAllTutorsIds(task.getResult());
+                            } else if (userRole == Role.TUTOR) {
+                                userIds = getAllStudentsIds(task.getResult());
+                            }
+
+                            successListener.onSuccess(userIds);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
+    private Set<String> getAllTutorsIds(QuerySnapshot queryDocumentSnapshots) {
+        Set<String> res = new HashSet<>();
+
+        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+            res.add(castToSession(document.getData()).getTutorId());
+        }
+
+        return res;
+    }
+
+    private Set<String> getAllStudentsIds(QuerySnapshot queryDocumentSnapshots) {
+        Set<String> res = new HashSet<>();
+
+        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+            res.add(castToSession(document.getData()).getStudentId());
+        }
+
+        return res;
     }
 }
