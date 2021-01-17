@@ -4,16 +4,21 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.app_perso.tutorfinder_v2.repository.model.ChatMessage;
 import com.app_perso.tutorfinder_v2.repository.model.Session;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
 import com.app_perso.tutorfinder_v2.util.Role;
 import com.app_perso.tutorfinder_v2.util.StatusSession;
+import com.app_perso.tutorfinder_v2.util.StringUtils;
 import com.app_perso.tutorfinder_v2.util.UserUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,6 +38,7 @@ public class DatabaseHelper {
     private CollectionReference collectionReferenceUsers = firebaseFirestore.collection(COLLECTION_USERS);
     private CollectionReference collectionReferenceSubjects = firebaseFirestore.collection(COLLECTION_SUBJECTS);
     private CollectionReference collectionReferenceSesions = firebaseFirestore.collection(COLLECTION_SESSIONS);
+    private DatabaseReference realtimeDbReference = FirebaseDatabase.getInstance().getReference();
 
     //if the entity is present in the database update the record, else create new record
     public void upsertUser(final User user, @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
@@ -289,5 +295,16 @@ public class DatabaseHelper {
                         }
                     }
                 });
+    }
+
+    public void pushMessageInRealtimeDb(ChatMessage chatMessage) {
+        realtimeDbReference
+                .push()
+                .setValue(chatMessage);
+    }
+
+    public Query getChatMessagesBetween2Ids(String senderId, String targetId) {
+        return realtimeDbReference.orderByChild("fromTo")
+                .equalTo(StringUtils.appendStringsAlphabetically(senderId, targetId));
     }
 }

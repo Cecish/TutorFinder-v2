@@ -36,4 +36,17 @@ public class StringUtils {
     public static List<String> stringToList(String string) {
         return new ArrayList<>(Arrays.asList(string.split(",")));
     }
+
+    public static String appendStringsAlphabetically(String str1, String str2) {
+        String res;
+
+        if (str1.compareTo(str2) <= 0) {
+            res = str1 + "_" + str2;
+
+        } else {
+            res = str2 + "_" + str1;
+        }
+
+        return res;
+    }
 }

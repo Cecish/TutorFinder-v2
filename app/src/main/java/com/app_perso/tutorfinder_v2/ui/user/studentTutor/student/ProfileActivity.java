@@ -40,6 +40,7 @@ import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.SubjectAdapter;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.sessions.SessionsManagementViewModel;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.chat.ChatActivity;
 import com.app_perso.tutorfinder_v2.util.AlphabetikUtils;
 import com.app_perso.tutorfinder_v2.util.FirestoreUtils;
 
@@ -75,6 +76,7 @@ public class ProfileActivity extends AppCompatActivity {
         TextView usernameTv = (TextView) findViewById(R.id.username);
         ImageView profilePic = (ImageView) findViewById(R.id.profile_pic);
         Button requestSessionBtn = (Button) findViewById(R.id.request_session_btn);
+        Button chatBtn = (Button) findViewById(R.id.chat_btn);
         Alphabetik alphabetik = (Alphabetik) findViewById(R.id.subject_sectionindex);
         RecyclerView subjectsRv = (RecyclerView) findViewById(R.id.subject_rv);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -257,6 +259,15 @@ public class ProfileActivity extends AppCompatActivity {
             if (isSessionSavedForUsers) {
                 Toast.makeText(context, getString(R.string.request_sent), Toast.LENGTH_SHORT).show();
                 sessionsManagementViewModel.setOutcomeSession(false);
+            }
+        });
+
+        chatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+                intent.putExtra("targetUser", tutor);
+                startActivity(intent);
             }
         });
     }

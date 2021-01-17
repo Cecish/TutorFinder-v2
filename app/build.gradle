@@ -52,6 +52,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.2'
     implementation 'com.github.richimf:Alphabetik:1.0.3'
     implementation 'com.google.firebase:firebase-storage:19.2.1'
+    implementation 'com.google.firebase:firebase-database:19.6.0'
+    implementation 'com.firebaseui:firebase-ui-database:0.4.0'
+    implementation 'com.firebaseui:firebase-ui:0.6.0'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -60,7 +63,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     implementation 'com.android.support:multidex:1.0.3'
-    
+
     // Lifecycle components
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0"
