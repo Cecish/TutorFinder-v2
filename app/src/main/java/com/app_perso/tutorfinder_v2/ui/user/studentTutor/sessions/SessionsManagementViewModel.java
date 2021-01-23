@@ -36,8 +36,8 @@ public class SessionsManagementViewModel extends ViewModel {
         databaseHelper = new DatabaseHelper();
     }
 
-    public void addSession(String subjectName, String sessionDate, String studentId, String tutorId) {
-        databaseHelper.addSession(subjectName, sessionDate, studentId, tutorId, addSessionSuccess, addSessionFailure);
+    public void addSession(String subjectName, String subjectId, String sessionDate, String studentId, String tutorId) {
+        databaseHelper.addSession(subjectName, subjectId, sessionDate, studentId, tutorId, addSessionSuccess, addSessionFailure);
     }
 
     private OnSuccessListener addSessionSuccess = new OnSuccessListener() {

@@ -12,12 +12,16 @@ import com.app_perso.tutorfinder_v2.util.StringUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SubjectsManagementViewModel extends ViewModel {
     private DatabaseHelper databaseHelper;
     public MutableLiveData<List<Subject>> subjects = new MutableLiveData<>();
     private MutableLiveData<List<Subject>> subjectsSelection = new MutableLiveData<>();
+    public MutableLiveData<List<String>> emailListSubjects = new MutableLiveData<>();
+    public MutableLiveData<Set<String>> emailListSessions = new MutableLiveData<>();
     public MutableLiveData<String> outcome = new MutableLiveData<>();
 
     public SubjectsManagementViewModel() {
@@ -36,6 +40,18 @@ public class SubjectsManagementViewModel extends ViewModel {
         databaseHelper.updateSubject(subject, updateSubjectSuccess, updateSubjectFailure);
     }
 
+    public void getEmailsOfUsersListingSubject(String subjectId) {
+        databaseHelper.getEmailsOfUsersListingSubject(subjectId, emailsSuccess, emailsFailure);
+    }
+
+    public void getEmailsOfUsersWithAcceptedSessions(String subjectId) {
+        databaseHelper.getEmailsOfUsersWithAcceptedSessions(subjectId, emailsSessionsSuccess, emailsFailureSuccess);
+    }
+
+    public void deleteSubject(String subjectId) {
+        databaseHelper.deleteSubject(subjectId);
+    }
+
     private OnSuccessListener subjectsSuccess = new OnSuccessListener() {
         @Override
         public void onSuccess(Object o) {
@@ -44,6 +60,34 @@ public class SubjectsManagementViewModel extends ViewModel {
     };
 
     private OnFailureListener subjectsFailure = new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+            setOutcome("Oops. An error occurred.");
+        }
+    };
+
+    private OnSuccessListener emailsSuccess = new OnSuccessListener() {
+        @Override
+        public void onSuccess(Object o) {
+            emailListSubjects.setValue((List<String>) o);
+        }
+    };
+
+    private OnFailureListener emailsFailure = new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+            setOutcome("Oops. An error occurred.");
+        }
+    };
+
+    private OnSuccessListener emailsSessionsSuccess = new OnSuccessListener() {
+        @Override
+        public void onSuccess(Object o) {
+            emailListSessions.setValue((Set<String>) o);
+        }
+    };
+
+    private OnFailureListener emailsFailureSuccess = new OnFailureListener() {
         @Override
         public void onFailure(@NonNull Exception e) {
             setOutcome("Oops. An error occurred.");
@@ -90,10 +134,22 @@ public class SubjectsManagementViewModel extends ViewModel {
         return subjects;
     }
 
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects.setValue(subjects);
+    }
+
     private void addSubjectLiveData(Subject subject) {
         List<Subject> tempSubjects = subjects.getValue();
         tempSubjects.add(subject);
         subjects.setValue(tempSubjects);
+    }
+
+    public LiveData<List<String>> getEmailsSubjects() {
+        return emailListSubjects;
+    }
+
+    public LiveData<Set<String>> getEmailsSessions() {
+        return emailListSessions;
     }
 
     public LiveData<String> getOutcome() {

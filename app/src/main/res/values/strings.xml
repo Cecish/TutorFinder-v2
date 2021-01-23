@@ -39,6 +39,8 @@
     <string name="add">Add</string>
     <string name="edit_subject">Edit a subject</string>
     <string name="edit">Edit</string>
+    <string name="subject_deletion">Deletion of subject ref  %1$s</string>
+    <string name="subject_deletion_body">"Dear tutor finder user, The subject referenced %1$s has been removed from Tutor Finder. All the sessions you registered for this subject have been removed and this subject will no longer appear among the list of subjects you saved in your profile. The Tutor Finder team"</string>
 
     <!-- Student/Tutor -->
     <string name="student_portal">Student portal</string>

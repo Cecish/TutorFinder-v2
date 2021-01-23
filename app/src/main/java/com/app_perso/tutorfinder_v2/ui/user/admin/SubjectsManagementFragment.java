@@ -1,6 +1,8 @@
 package com.app_perso.tutorfinder_v2.ui.user.admin;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,21 +15,25 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alphabetik.Alphabetik;
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.repository.model.Subject;
+import com.app_perso.tutorfinder_v2.util.CombinedLiveData2;
 import com.app_perso.tutorfinder_v2.util.ViewFlipperUtils;
 import com.app_perso.tutorfinder_v2.util.AlphabetikUtils;
 import com.app_perso.tutorfinder_v2.util.DialogUtils;
 import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.SubjectAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 public class SubjectsManagementFragment extends Fragment implements SubjectAdapter.ItemClickListener {
@@ -85,6 +91,56 @@ public class SubjectsManagementFragment extends Fragment implements SubjectAdapt
                                 layoutManager.getOrientation());
                         recyclerView.addItemDecoration(dividerItemDecoration);
                     }
+
+                    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.DOWN | ItemTouchHelper.UP) {
+
+                        @Override
+                        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                            return false;
+                        }
+
+                        @Override
+                        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                            //Remove swiped item from list and notify the RecyclerView
+                            int position = viewHolder.getAdapterPosition();
+                            String subjectId = subjects.get(position).getId();
+                            subjectsManagementViewModel.deleteSubject(subjectId);
+
+                            //Get email addresses of students and tutors having sessions that match sessions in the present or future
+                            subjectsManagementViewModel.getEmailsOfUsersWithAcceptedSessions(subjectId);
+
+                            //Get email addresses of students and tutors having the subject to delete in their teaching or tutoring needs list
+                            subjectsManagementViewModel.getEmailsOfUsersListingSubject(subjectId);
+
+                            (new CombinedLiveData2(subjectsManagementViewModel.getEmailsSessions(),
+                                    subjectsManagementViewModel.getEmailsSubjects())).observe(getViewLifecycleOwner(), new Observer<Pair<Set<String>, List<String>>>() {
+                                @Override
+                                public void onChanged(Pair<Set<String>, List<String>> pairSetList) {
+                                    Set<String> emails = pairSetList.first;
+                                    emails.addAll(pairSetList.second);
+
+                                    //List<String> emailList = new ArrayList<>(chatBuddiesIds);
+                                    Intent i = new Intent(Intent.ACTION_SEND);
+                                    i.setType("message/rfc822");
+                                    i.putExtra(Intent.EXTRA_EMAIL  , emails.toArray(new String[emails.size()]));
+                                    i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.subject_deletion, subjectId));
+                                    i.putExtra(Intent.EXTRA_TEXT   , getString(R.string.subject_deletion_body, subjectId));
+                                    try {
+                                        startActivity(Intent.createChooser(i, "Send mail..."));
+                                    } catch (android.content.ActivityNotFoundException ex) {
+                                        Toast.makeText(requireContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                            subjects.remove(position);
+                            subjectAdapter.notifyDataSetChanged();
+                            subjectsManagementViewModel.setSubjects(subjects);
+                        }
+                    };
+
+                    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+                    itemTouchHelper.attachToRecyclerView(recyclerView);
                 }
             }
         };

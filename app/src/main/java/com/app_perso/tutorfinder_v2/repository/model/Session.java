@@ -14,22 +14,25 @@ public class Session implements Parcelable, Comparable<Session> {
     private String id;
     private String date;
     private String subjectName;
+    private String subjectId;
     private StatusSession status;
     private String studentId;
     private String tutorId;
 
-    public Session(String date, String subjectName, String studentId, String tutorId) {
+    public Session(String date, String subjectName, String subjectId, String studentId, String tutorId) {
         this.date = date;
         this.subjectName = subjectName;
+        this.subjectId = subjectId;
         this.status = StatusSession.PENDING;
         this.studentId = studentId;
         this.tutorId = tutorId;
     }
 
-    public Session(String id, String date, String subjectName, StatusSession status, String studentId, String tutorId) {
+    public Session(String id, String date, String subjectName, String subjectId, StatusSession status, String studentId, String tutorId) {
         this.id = id;
         this.date = date;
         this.subjectName = subjectName;
+        this.subjectId = subjectId;
         this.status = status;
         this.studentId = studentId;
         this.tutorId = tutorId;
@@ -80,6 +83,7 @@ public class Session implements Parcelable, Comparable<Session> {
         sessionMap.put("id", id);
         sessionMap.put("date", date);
         sessionMap.put("subjectName", subjectName);
+        sessionMap.put("subjectId", subjectId);
         sessionMap.put("status", status);
         sessionMap.put("studentId", studentId);
         sessionMap.put("tutorId", tutorId);
@@ -94,6 +98,7 @@ public class Session implements Parcelable, Comparable<Session> {
                 "id='" + id + '\'' +
                 ", date='" + date + '\'' +
                 ", subjectName='" + subjectName + '\'' +
+                ", subjectId='" + subjectId + '\'' +
                 ", status='" + status + '\'' +
                 ", [studentId='" + studentId + ", tutorId=" + tutorId + "]" + '\'' +
                 '}';
@@ -101,16 +106,17 @@ public class Session implements Parcelable, Comparable<Session> {
 
     // Parcelling part
     public Session(Parcel in){
-        String[] data = new String[6];
+        String[] data = new String[7];
 
         in.readStringArray(data);
         // the order needs to be the same as in writeToParcel() method
         this.id = data[0];
         this.date = data[1];
         this.subjectName = data[2];
-        this.status = StatusSession.valueOf(data[3]);
-        this.studentId = data[4];
-        this.tutorId = data[5];
+        this.subjectId = data[3];
+        this.status = StatusSession.valueOf(data[4]);
+        this.studentId = data[5];
+        this.tutorId = data[6];
     }
 
     @Override
@@ -124,6 +130,7 @@ public class Session implements Parcelable, Comparable<Session> {
                 this.id,
                 this.date,
                 this.subjectName,
+                this.subjectId,
                 this.status.name(),
                 this.studentId,
                 this.tutorId

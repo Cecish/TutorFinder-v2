@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,6 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
     private int minute;
     private Context context = this;
     private LifecycleOwner lifecycleOwner = this;
+    private List<Subject> subjectItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +172,7 @@ public class ProfileActivity extends AppCompatActivity {
                             //sort subject list
                             Collections.sort(subjects);
 
+                            subjectItems = subjects;
                             String[] items = new String[subjects.size()];
                             items = getSubjectNames(subjects).toArray(items);
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, items);
@@ -233,7 +236,7 @@ public class ProfileActivity extends AppCompatActivity {
                         cal.set(Calendar.MINUTE, minute);
                         cal.set(Calendar.SECOND, 0);
                         cal.set(Calendar.MILLISECOND, 0);
-                        sessionsManagementViewModel.addSession(dropdownSubjects.getSelectedItem().toString(),
+                        sessionsManagementViewModel.addSession(dropdownSubjects.getSelectedItem().toString(), subjectItems.get(dropdownSubjects.getSelectedItemPosition()).getId(),
                                 String.valueOf(cal.getTime().getTime()), currentUser.getId(), tutor.getId());
                         sessionsManagementViewModel.getAddedSession().observe(lifecycleOwner, addedSessionObserver);
                         dialog.dismiss();
