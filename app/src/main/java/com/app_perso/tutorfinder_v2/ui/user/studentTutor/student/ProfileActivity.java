@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +40,7 @@ import com.app_perso.tutorfinder_v2.ui.signInSignUp.SignInSignUpViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.admin.SubjectsManagementViewModel;
 import com.app_perso.tutorfinder_v2.ui.user.admin.adapter.SubjectAdapter;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.sessions.SessionsManagementViewModel;
-import com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.chat.ChatActivity;
+import com.app_perso.tutorfinder_v2.ui.user.studentTutor.chat.ChatActivity;
 import com.app_perso.tutorfinder_v2.util.AlphabetikUtils;
 import com.app_perso.tutorfinder_v2.util.FirestoreUtils;
 

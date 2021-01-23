@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_tutor_finder_v2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.user.studentTutor.ui.chat.ChatActivity"
+        <activity android:name=".ui.user.studentTutor.chat.ChatActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.user.studentTutor.student.ProfileActivity"

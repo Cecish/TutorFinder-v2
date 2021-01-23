@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.home;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.home;
 
 import android.Manifest;
 import android.app.Activity;

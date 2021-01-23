@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.mySubjects;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.mySubjects;
 
 
 import android.util.Log;

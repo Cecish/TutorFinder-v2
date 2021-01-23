@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.chat;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.chat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app_perso.tutorfinder_v2.R;
 import com.app_perso.tutorfinder_v2.UserSingleton;
 import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.ProfileActivity;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.student.StudentMainActivity;
 import com.app_perso.tutorfinder_v2.ui.user.studentTutor.tutor.TutorMainActivity;
 import com.app_perso.tutorfinder_v2.util.CombinedLiveData2;

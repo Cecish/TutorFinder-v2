@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_blue"
     android:orientation="vertical"
-    tools:context=".ui.user.studentTutor.ui.home.HomeFragment" >
+    tools:context=".ui.user.studentTutor.home.HomeFragment" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

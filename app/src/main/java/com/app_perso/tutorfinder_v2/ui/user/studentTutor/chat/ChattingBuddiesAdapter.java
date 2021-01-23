@@ -1,4 +1,4 @@
-package com.app_perso.tutorfinder_v2.ui.user.studentTutor.ui.chat;
+package com.app_perso.tutorfinder_v2.ui.user.studentTutor.chat;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,11 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app_perso.tutorfinder_v2.R;
-import com.app_perso.tutorfinder_v2.repository.model.Subject;
 import com.app_perso.tutorfinder_v2.repository.model.User;
-import com.app_perso.tutorfinder_v2.util.ArrayUtils;
 import com.app_perso.tutorfinder_v2.util.FirestoreUtils;
-import com.app_perso.tutorfinder_v2.util.SubjectUtils;
 
 import java.util.List;
 
