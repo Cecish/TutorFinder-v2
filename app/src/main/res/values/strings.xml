@@ -56,6 +56,7 @@
     <string name="save_subjects_selection">Save your subjects selection</string>
     <string name="search_opt1">Search based on your learning needs:</string>
     <string name="search">Search</string>
+    <string name="max_filters_search">You can only apply up to 10 subjects when searching for matching tutors</string>
     <string name="or">OR</string>
     <string name="matched_tutors">Matched tutors</string>
     <string name="instructions_matched_tutors">Click on a tutor in the list below to see further details</string>

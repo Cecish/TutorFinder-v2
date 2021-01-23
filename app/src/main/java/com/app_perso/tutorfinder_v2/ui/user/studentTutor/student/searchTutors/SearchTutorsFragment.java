@@ -79,17 +79,22 @@ public class SearchTutorsFragment extends Fragment implements SubjectAdapterChec
         searchOpt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SearchResultActivity.class);
-                Bundle args = new Bundle();
-                args.putSerializable("USER_SUBJECT_IDS",(Serializable) newUserSubjectIds);
-                intent.putExtra("BUNDLE", args);
-                startActivity(intent);
+                if (newUserSubjectIds.size()>10) {
+                    Toast.makeText(requireContext(), getString(R.string.max_filters_search), Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(getActivity(), SearchResultActivity.class);
+                    Bundle args = new Bundle();
+                    args.putSerializable("USER_SUBJECT_IDS",(Serializable) newUserSubjectIds);
+                    intent.putExtra("BUNDLE", args);
+                    startActivity(intent);
+                }
             }
         });
 
         subjectsObserver = new Observer<List<Subject>>() {
             @Override
             public void onChanged(@Nullable final List<Subject> subjects) {
+                assert subjects != null;
                 if (subjects.size() == 0) {
                     Toast.makeText(requireContext(), getResources().getString(R.string.error_no_subjects), Toast.LENGTH_SHORT).show();
                 } else {
@@ -110,7 +115,7 @@ public class SearchTutorsFragment extends Fragment implements SubjectAdapterChec
                     subjectsRv.setLayoutManager(layoutManager);
                     SubjectAdapterCheckBox subjectAdapter = new SubjectAdapterCheckBox(requireContext(),
                             subjects, new ArrayList<>(), false);
-                    subjectAdapter.addItemClickListener(SearchTutorsFragment.this::onItemClick);
+                    subjectAdapter.addItemClickListener(SearchTutorsFragment.this);
                     subjectsRv.setAdapter(subjectAdapter);
 
                     if (subjectsRv.getItemDecorationCount() == 0) {
