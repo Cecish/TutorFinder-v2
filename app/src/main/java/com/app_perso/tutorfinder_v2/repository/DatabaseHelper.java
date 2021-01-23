@@ -30,6 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -144,6 +145,23 @@ public class DatabaseHelper {
                 });
     }
 
+    public void deleteSession(String sessionId) {
+        collectionReferenceSessions.document(sessionId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("TUTOR-FINDER", "Session " + sessionId + " has been successfully deleted");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("TUTOR-FINDER", "An error occurred when attempting to delete session " + sessionId);
+                    }
+                });
+    }
+
     public void getAllSubjects(@NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
         collectionReferenceSubjects
                 .get()
@@ -156,6 +174,99 @@ public class DatabaseHelper {
                                 subjects.add(castToSubject(document.getData()));
                             }
                             successListener.onSuccess(subjects);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
+    public void getEmailsOfUsersListingSubject(String subjectId, @NonNull final OnSuccessListener successListener,
+                                @NonNull final OnFailureListener failureListener) {
+        collectionReferenceUsers
+                .whereEqualTo("status", "ACCEPTED")
+                .whereArrayContains("subjects", subjectId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            List<String> emails = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                User user = UserUtils.castToUser(document.getData());
+                                emails.add(user.getEmail());
+
+                                //Update user (subject with subjectId has been removed)
+                                List<String> updatedSubjectIdList = user.getSubjectIds();
+                                updatedSubjectIdList.remove(subjectId);
+                                user.setSubjectIds(updatedSubjectIdList);
+                                upsertUser(user, new OnSuccessListener() {
+                                    @Override
+                                    public void onSuccess(Object o) {
+                                        Log.d("CECILE", "User " + user.getId() + " has been updated");
+                                    }
+                                }, new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d("CECILE", "User " + user.getId() + " couldn't be updated");
+                                    }
+                                });
+                            }
+                            successListener.onSuccess(emails);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
+    public void getEmailsOfUsersListingSession(String sessionId, @NonNull final OnSuccessListener successListener,
+                                               @NonNull final OnFailureListener failureListener) {
+        collectionReferenceUsers
+                .whereArrayContains("sessions", sessionId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            List<String> emails = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                emails.add(UserUtils.castToUser(document.getData()).getEmail());
+                            }
+                            successListener.onSuccess(emails);
+                        } else {
+                            failureListener.onFailure(Objects.requireNonNull(task.getException()));
+                        }
+                    }
+                });
+    }
+
+    public void getEmailsOfUsersWithAcceptedSessions(String subjectId, @NonNull final OnSuccessListener successListener,
+                                               @NonNull final OnFailureListener failureListener) {
+        collectionReferenceSessions
+                .whereEqualTo("subjectId", subjectId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            Set<String> emails = new HashSet<>();
+                            Session session;
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                session = castToSession(document.getData());
+                                if (Long.parseLong(session.getDate()) >= new Date().getTime()) {
+                                    getEmailsOfUsersListingSession(session.getId(), new OnSuccessListener() {
+                                        @Override
+                                        public void onSuccess(Object o) {
+                                            emails.addAll((ArrayList<String>) o);
+                                        }
+                                    }, failureListener);
+                                }
+
+                                //Delete session (subject with subjectId has been removed)
+                                deleteSession(session.getId());
+                            }
+                            successListener.onSuccess(emails);
                         } else {
                             failureListener.onFailure(Objects.requireNonNull(task.getException()));
                         }
@@ -203,6 +314,7 @@ public class DatabaseHelper {
                     Objects.requireNonNull(map.get("id")).toString(),
                     Objects.requireNonNull(map.get("date")).toString(),
                     Objects.requireNonNull(map.get("subjectName")).toString(),
+                    Objects.requireNonNull(map.get("subjectId")).toString(),
                     StatusSession.valueOf(Objects.requireNonNull(map.get("status")).toString()),
                     Objects.requireNonNull(map.get("studentId")).toString(),
                     Objects.requireNonNull(map.get("tutorId")).toString()
@@ -234,10 +346,11 @@ public class DatabaseHelper {
                 .addOnFailureListener(failureListener);
     }
 
-    public void addSession(final String subjectName, final String sessionDate, String studentId, String tutorId,
+    public void addSession(final String subjectName, final String subjectId, final String sessionDate, String studentId, String tutorId,
                            @NonNull final OnSuccessListener successListener, @NonNull final OnFailureListener failureListener) {
         collectionReferenceSessions
                 .whereEqualTo("subjectName", subjectName)
+                .whereEqualTo("subjectId", subjectId)
                 .whereEqualTo("date", sessionDate)
                 .whereEqualTo("studentId", studentId)
                 .whereEqualTo("tutorId", tutorId)
@@ -249,7 +362,7 @@ public class DatabaseHelper {
 
                             if (task.getResult().size() == 0) {
                                 //Add new subject
-                                upsertSession(new Session(sessionDate, subjectName, studentId, tutorId),
+                                upsertSession(new Session(sessionDate, subjectName, subjectId, studentId, tutorId),
                                         successListener, failureListener);
 
                             } else {
