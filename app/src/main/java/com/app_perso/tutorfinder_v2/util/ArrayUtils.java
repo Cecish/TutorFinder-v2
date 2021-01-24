@@ -11,7 +11,7 @@ public class ArrayUtils {
 
         if (listStr != null && listStr.size() > 0) {
             for (String itemStr: listStr) {
-                if (!itemStr.isEmpty()) {
+                if (itemStr != null && !itemStr.isEmpty()) {
                     res = false;
                     break;
                 }

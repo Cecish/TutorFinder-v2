@@ -20,15 +20,18 @@ public class StringUtils {
 
     public static String listToString(List<String> stringList) {
         String res = "";
-        int listSize = stringList.size()-1;
-        StringBuilder resBuilder = new StringBuilder();
 
-        for (int i = 0; i < listSize; i++) {
-            resBuilder.append(stringList.get(i)).append(",");
+        if (!ArrayUtils.isNullOrEmpty(stringList)) {
+            int listSize = stringList.size()-1;
+            StringBuilder resBuilder = new StringBuilder();
+
+            for (int i = 0; i < listSize; i++) {
+                resBuilder.append(stringList.get(i)).append(",");
+            }
+
+            res = resBuilder.toString();
+            res += stringList.get(listSize);
         }
-
-        res = resBuilder.toString();
-        res += stringList.get(listSize);
 
         return res;
     }
